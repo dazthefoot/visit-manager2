@@ -1,0 +1,2888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Huber Visit Manager</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0f1923;--ink2:#3d4f60;--ink3:#7a8fa0;
+  --bg:#eef2f7;--surface:#fff;--surface2:#f5f8fc;
+  --blue:#0054a6;--blue-light:#ddeeff;--blue-mid:#1a7fd4;
+  --orange:#d94f00;--orange-light:#fdeee6;
+  --teal:#006e5e;--teal-light:#e0f4f1;
+  --green:#1a7a3a;--green-light:#e6f5eb;
+  --red:#c0392b;--red-light:#fdecea;
+  --amber:#b35c00;--amber-light:#fff3e0;
+  --purple:#4527a0;--purple-light:#ede7f6;
+  --border:rgba(0,0,0,0.09);
+  --font:'DM Sans',sans-serif;--r:12px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:14px;min-height:100vh;}
+.app{max-width:1080px;margin:0 auto;padding:18px 14px 60px;}
+.header{background:var(--blue);border-radius:var(--r);margin-bottom:20px;overflow:hidden;display:grid;grid-template-columns:1fr auto;box-shadow:0 6px 24px rgba(0,84,166,.28);}
+.hl{padding:20px 28px;}.hr{background:rgba(255,255,255,.1);padding:20px 28px;display:flex;flex-direction:column;align-items:flex-end;gap:8px;border-left:1px solid rgba(255,255,255,.15);}
+.header h1{color:#fff;font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:3px;}
+.header-sub{color:rgba(255,255,255,.65);font-size:12px;}
+.badge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:12px;font-weight:600;padding:6px 13px;border-radius:20px;}
+.bdot{width:7px;height:7px;border-radius:50%;background:#00c853;}
+.rep-info{font-size:12px;color:rgba(255,255,255,.6);}.rep-info strong{color:#fff;}
+.nav{display:flex;gap:4px;background:var(--surface);border-radius:var(--r);padding:5px;margin-bottom:20px;border:.5px solid var(--border);}
+.nb{flex:1;padding:9px 6px;border:none;background:transparent;border-radius:9px;cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;color:var(--ink3);transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.nb:hover{background:var(--surface2);color:var(--ink);}.nb.on{background:var(--blue);color:#fff;}
+.panel{display:none;}.panel.on{display:block;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--surface);border-radius:var(--r);padding:14px 16px;border:.5px solid var(--border);position:relative;overflow:hidden;}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.stat.b::after{background:var(--blue);}.stat.o::after{background:var(--orange);}.stat.t::after{background:var(--teal);}.stat.g::after{background:var(--green);}.stat.a::after{background:var(--amber);}.stat.p::after{background:var(--purple);}
+.sn{font-size:24px;font-weight:700;line-height:1;}.sl{font-size:11px;color:var(--ink3);margin-top:4px;font-weight:500;}.ss{font-size:11px;font-weight:600;margin-top:5px;}.ss.up{color:var(--green);}.ss.warn{color:var(--orange);}
+.card{background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.chd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ct{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}.mb{margin-bottom:16px;}
+.cust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;}
+.cc{background:var(--surface);border-radius:10px;border:1.5px solid var(--border);padding:11px 13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;}
+.cc:hover{border-color:var(--blue);background:var(--blue-light);transform:translateY(-1px);}
+.cav{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
+.cn{font-size:12px;font-weight:600;line-height:1.3;}.cl{font-size:11px;color:var(--ink3);margin-top:1px;}
+.vr{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:9px;background:var(--surface2);border:.5px solid var(--border);transition:all .14s;margin-bottom:7px;}
+.vr:hover{background:var(--blue-light);border-color:rgba(0,84,166,.18);}
+.vav{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
+.vi{flex:1;min-width:0;}.vn{font-size:13px;font-weight:600;}.vm{font-size:11px;color:var(--ink3);margin-top:1px;}
+.vright{text-align:right;}.vdate{font-size:12px;font-weight:700;color:var(--blue);}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;margin-top:3px;text-transform:uppercase;letter-spacing:.3px;}
+.pb{background:var(--blue-light);color:var(--blue);}.pg{background:var(--green-light);color:var(--green);}.po{background:var(--orange-light);color:var(--orange);}.pr{background:var(--red-light);color:var(--red);}.pa{background:var(--amber-light);color:var(--amber);}.pt{background:var(--teal-light);color:var(--teal);}
+.fl{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.fi{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;color:var(--ink);background:var(--surface2);outline:none;transition:border .14s;}
+.fi:focus{border-color:var(--blue);background:#fff;}
+textarea.fi{resize:vertical;min-height:75px;line-height:1.55;}.fg{margin-bottom:13px;}
+.shd{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 11px;display:flex;align-items:center;gap:8px;}
+.shd::after{content:'';flex:1;height:1px;background:var(--border);}
+.btn{padding:10px 18px;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .16s;display:inline-flex;align-items:center;gap:6px;}
+.bpri{background:var(--blue);color:#fff;}.bpri:hover{background:#003d80;transform:translateY(-1px);}
+.bsuc{background:var(--green);color:#fff;}.bsuc:hover{background:#115228;}
+.bout{background:transparent;color:var(--blue);border:1.5px solid var(--blue);}.bout:hover{background:var(--blue-light);}
+.bgho{background:transparent;color:var(--ink3);border:1.5px solid var(--border);}.bgho:hover{background:var(--surface2);color:var(--ink);}
+.bred{background:var(--red);color:#fff;}.bred:hover{background:#922b21;}
+.bsm{padding:5px 12px;font-size:11px;}
+.olb{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#0054a6,#1a7fd4);border-radius:10px;padding:14px 18px;margin-bottom:18px;}
+.oli{width:38px;height:38px;background:rgba(255,255,255,.18);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.olt{flex:1;}.olt strong{color:#fff;font-size:13px;display:block;}.olt span{color:rgba(255,255,255,.65);font-size:12px;}
+.ollb{background:#fff;color:var(--blue);font-size:12px;font-weight:700;padding:7px 14px;border-radius:7px;border:none;cursor:pointer;white-space:nowrap;}
+.ollb:hover{background:#ddeeff;}
+.cal-wrap{background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);overflow:hidden;}
+.cal-hd{display:flex;align-items:center;justify-content:space-between;background:var(--blue);color:#fff;padding:13px 18px;}
+.cal-hd-t{font-size:15px;font-weight:700;}
+.cal-nav{background:rgba(255,255,255,.18);border:none;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:16px;}
+.cal-wd-row{display:grid;grid-template-columns:repeat(7,1fr);background:var(--surface2);border-bottom:.5px solid var(--border);}
+.cal-wd{text-align:center;font-size:11px;font-weight:700;color:var(--ink3);padding:8px 0;text-transform:uppercase;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-day{min-height:72px;padding:6px 7px;border-right:.5px solid var(--border);border-bottom:.5px solid var(--border);cursor:pointer;transition:background .12s;}
+.cal-day:hover{background:var(--blue-light);}.cal-day.today{background:#e8f0ff;}.cal-day.other{opacity:.35;}.cal-day.sel{background:var(--blue-light);outline:2px solid var(--blue);}
+.cal-dn{font-size:12px;font-weight:600;color:var(--ink2);}.cal-day.today .cal-dn{color:var(--blue);font-weight:700;}
+.cal-evt{font-size:10px;background:var(--blue);color:#fff;border-radius:3px;padding:2px 5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal-evt.done{background:var(--teal);}
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.kcol{background:var(--surface2);border-radius:var(--r);padding:12px;border:.5px solid var(--border);}
+.kcol-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.kcard{background:var(--surface);border-radius:9px;border:.5px solid var(--border);padding:11px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.kcard:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08);}
+.kcard-cust{font-size:12px;font-weight:700;margin-bottom:3px;}.kcard-prod{font-size:11px;color:var(--ink3);}.kcard-ref{font-size:10px;font-weight:700;color:var(--ink3);font-family:monospace;margin-top:4px;}
+.kcard-days{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;display:inline-block;margin-top:4px;}
+.kbtn{width:100%;padding:8px;border:1.5px dashed var(--border);background:transparent;border-radius:8px;color:var(--ink3);font-family:var(--font);font-size:12px;cursor:pointer;margin-top:4px;}
+.kbtn:hover{background:var(--surface);border-color:var(--blue);color:var(--blue);}
+.ar{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--surface2);border-radius:8px;border:.5px solid var(--border);margin-bottom:7px;}
+.ar input{flex:1;border:none;background:transparent;font-family:var(--font);font-size:12px;color:var(--ink);outline:none;}
+.artag{font-size:11px;font-weight:700;background:var(--blue-light);color:var(--blue);padding:3px 8px;border-radius:5px;white-space:nowrap;}
+.ardue{font-size:11px;font-weight:700;white-space:nowrap;min-width:72px;text-align:right;}
+.ar-btns{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.ar-btns .btn{width:62px;justify-content:center;}
+.sbar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:8px 13px;margin-bottom:14px;}
+.sbar input{flex:1;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--ink);outline:none;}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.chip{font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .13s;border:1.5px solid var(--border);background:var(--surface);color:var(--ink2);}
+.chip:hover,.chip.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+.div{height:1px;background:var(--border);margin:14px 0;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.18);z-index:9999;opacity:0;transform:translateY(8px);transition:all .28s;pointer-events:none;}
+.toast.on{opacity:1;transform:translateY(0);}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:var(--surface);border-radius:var(--r);padding:24px 28px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px;}
+.modal-btns{display:flex;gap:10px;margin-top:18px;}
+@media(max-width:700px){.cust-grid,.kanban{grid-template-columns:1fr 1fr;}.stats{grid-template-columns:1fr 1fr;}.g2{grid-template-columns:1fr;}.g3{grid-template-columns:1fr;}.nb span{display:none;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div class="hl"><h1>Huber Visit Manager</h1><div class="header-sub">Territory Account Manager &bull; <span id='hdr-cust-ct'>25</span> Customer Sites</div></div>
+  <div class="hr"><div class="badge"><span class="bdot"></span>Outlook Calendar</div><div class="rep-info">Rep: <strong id="rep-name-hdr">My Account</strong></div><div class="rep-info" id="date-display"></div></div>
+</div>
+
+<div class="nav">
+  <button class="nb on" onclick="tab('dash')">&#9635;<span> Dashboard</span></button>
+  <button class="nb" onclick="tab('customers')">&#9673;<span> Customers</span></button>
+  <button class="nb" onclick="tab('schedule')">&#8853;<span> Schedule</span></button>
+  <button class="nb" onclick="tab('log')">&#9776;<span> Visit Log</span></button>
+  <button class="nb" onclick="tab('calendar')">&#9633;<span> Calendar</span></button>
+  <button class="nb" onclick="tab('iif')">&#9672;<span> IIF Pipeline</span></button>
+  <button class="nb" onclick="tab('actions')">&#10022;<span> Actions</span></button>
+  <button class="nb" onclick="tab('reports')">&#8595;<span> Reports</span></button>
+  <button class="nb" onclick="tab('admin')">&#9998;<span> Admin Day</span></button>
+  <button class="nb" onclick="tab('settings')">&#9881;<span> Settings</span></button>
+</div>
+
+<!-- DASHBOARD -->
+<div class="panel on" id="p-dash">
+  <div class="stats">
+    <div class="stat b"><div class="sn" id="s-vis">0</div><div class="sl">Visits This Month</div><div class="ss up">On track</div></div>
+    <div class="stat o"><div class="sn" id="s-up">0</div><div class="sl">Upcoming Scheduled</div><div class="ss warn">Check calendar</div></div>
+    <div class="stat t"><div class="sn" id="s-act">0</div><div class="sl">Open Actions</div><div class="ss warn" id="s-ov-txt">0 overdue</div></div>
+    <div class="stat g"><div class="sn">25</div><div class="sl">Active Accounts</div><div class="ss up">All monitored</div></div>
+    <div class="stat a"><div class="sn" id="s-iif">0</div><div class="sl">Outstanding IIFs</div><div class="ss warn">Chase this week</div></div>
+    <div class="stat p" style="cursor:pointer;" onclick="tab('admin')" title="Open Admin Day"><div class="sn" id="s-adm-open">0</div><div class="sl">Admin To Dos Open</div><div class="ss warn" id="s-adm-over">0 overdue</div></div>
+  </div>
+  <div class="g2 mb">
+    <div class="card"><div class="chd"><div class="ct">Upcoming Visits</div><button class="btn bsm bout" onclick="tab('schedule')">+ Schedule</button></div><div id="d-up"></div></div>
+    <div class="card"><div class="chd"><div class="ct">Frequency Alerts</div><span class="pill pr" id="d-freq-ct">0</span></div><div id="d-freq"></div></div>
+  </div>
+  <div class="g2 mb">
+    <div class="card"><div class="chd"><div class="ct">Recent Visit Logs</div><button class="btn bsm bgho" onclick="tab('log')">View all</button></div><div id="d-recent"></div></div>
+    <div class="card" style="border-left:4px solid var(--purple);">
+      <div class="chd">
+        <div class="ct" style="color:var(--purple);">&#9998; Admin Day</div>
+        <div style="display:flex;gap:7px;align-items:center;">
+          <span class="pill pp" id="d-adm-badge">0 open</span>
+          <button class="btn bsm bgho" onclick="tab('admin')">Open</button>
+        </div>
+      </div>
+      <div id="d-adm-next-label" style="font-size:11px;color:var(--ink3);margin-bottom:10px;"></div>
+      <div id="d-adm-todos"></div>
+      <div id="d-adm-log-preview" style="margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMERS -->
+<div class="panel" id="p-customers">
+  <div class="sbar"><span style="color:var(--ink3);font-size:16px;">&#9906;</span><input type="text" placeholder="Search customers..." id="cust-search" oninput="renderCusts()"/></div>
+  <div class="chips">
+    <div class="chip on" onclick="setGrp(this,'all')">All (25)</div>
+    <div class="chip" onclick="setGrp(this,'GPI')">GPI Sites (6)</div>
+    <div class="chip" onclick="setGrp(this,'Smurfit')">Smurfit WestRock (3)</div>
+    <div class="chip" onclick="setGrp(this,'Huber')">Huber (3)</div>
+    <div class="chip" onclick="setGrp(this,'other')">Independent (13)</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start;" id="cust-layout">
+    <div class="cust-grid" id="cust-grid" style="grid-template-columns:repeat(2,1fr);"></div>
+    <div id="cust-history-panel" style="display:none;">
+      <div class="card" style="border-top:4px solid var(--blue);">
+        <div class="chd" style="margin-bottom:14px;">
+          <div class="ct" style="color:var(--blue);" id="chp-title">Customer History</div>
+          <button class="btn bsm bgho" onclick="closeCustHistory()">&#10005;</button>
+        </div>
+        <div id="chp-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="panel" id="p-schedule">
+  <div class="olb">
+    <div class="oli"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2.5" stroke="white" stroke-width="1.8"/><line x1="2" y1="8.5" x2="22" y2="8.5" stroke="white" stroke-width="1.4"/><line x1="7" y1="1.5" x2="7" y2="5.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/><line x1="17" y1="1.5" x2="17" y2="5.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+    <div class="olt"><strong>Microsoft Outlook Calendar</strong><span>Scheduling downloads a .ics file — double-click to open in Outlook. Or open Outlook Web directly.</span></div>
+    <button class="ollb" onclick="window.open('https://outlook.office.com/calendar','_blank')">Open Outlook</button>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="card mb">
+        <div class="chd" style="margin-bottom:14px;">
+          <div class="ct">Customer &amp; Visit Details</div>
+          <button class="btn bsm" id="sch-admin-toggle-btn" style="background:var(--purple-light);color:var(--purple);border:1.5px solid var(--purple);" onclick="toggleAdminDaySchedule()">&#9998; Schedule Admin Day</button>
+        </div>
+
+        <!-- CUSTOMER VISIT FIELDS (default) -->
+        <div id="sch-customer-fields">
+          <div class="fg"><div class="fl">Customer</div><select class="fi" id="sch-cust" onchange="onSchCust()"><option value="">-- Select customer --</option></select></div>
+          <div class="fg"><div class="fl">Contact Name</div><input class="fi" type="text" id="sch-contact" placeholder="Person you're meeting"/></div>
+          <div class="fg"><div class="fl">Contact Email</div><input class="fi" type="email" id="sch-email" placeholder="name@company.com"/></div>
+        </div>
+
+        <!-- ADMIN DAY FIELDS (shown when toggled) -->
+        <div id="sch-admin-fields" style="display:none;">
+          <div style="background:var(--purple-light);border-radius:9px;padding:12px 14px;margin-bottom:14px;border:1.5px solid rgba(69,39,160,.2);">
+            <div style="font-weight:700;font-size:13px;color:var(--purple);margin-bottom:4px;">&#9998; Admin Day</div>
+            <div style="font-size:12px;color:var(--ink3);">Scheduling an Admin Day will export a .ics calendar entry and automatically transfer any activities already logged in the Admin Day Log for the selected date into the Visit Log.</div>
+          </div>
+          <div class="fg"><div class="fl">Admin Day Label / Focus</div><input class="fi" type="text" id="sch-admin-label" placeholder="e.g. Office admin, Quotes &amp; proposals, Training day..."/></div>
+        </div>
+        <div id="sch-purpose-fields">
+        <div class="fg">
+          <div class="fl">Visit Purpose</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;" id="purp-chips">
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Product Review')">Product Review</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'IIF Follow-up')">IIF Follow-up</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'New Enquiry')">New Enquiry</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Samples')">Samples</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Account Review')">Account Review</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Audit')">Audit</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Enquiry Follow-up')">Enquiry Follow-up</span>
+            <span class="chip" style="font-size:11px;" onclick="setPurp(this,'Technical Visit')">Technical Visit</span>
+          </div>
+          <input class="fi" type="text" id="sch-purp" placeholder="Or type custom purpose..."/>
+        </div>
+        <div class="fg"><div class="fl">Products / Inks to Discuss</div><input class="fi" type="text" id="sch-prods" placeholder="e.g. UV flexo, litho-lam, water-based coatings..."/></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb">
+        <div class="ct" style="margin-bottom:14px;">Date, Time &amp; Export</div>
+        <div class="g2" style="gap:10px;">
+          <div class="fg"><div class="fl">Visit Date</div><input class="fi" type="date" id="sch-date"/></div>
+          <div class="fg"><div class="fl">Start Time</div><input class="fi" type="time" id="sch-time" value="09:00"/></div>
+        </div>
+        <div class="g2" style="gap:10px;">
+          <div class="fg"><div class="fl">Duration</div>
+            <select class="fi" id="sch-dur">
+              <option>30 minutes</option><option selected>1 hour</option><option>1.5 hours</option><option>2 hours</option><option>Half day</option><option>Full day</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Travel From</div><input class="fi" type="text" id="sch-from" placeholder="Your prev location"/></div>
+        </div>
+        <div class="fg"><div class="fl">Pre-Visit Notes / Objectives</div><textarea class="fi" id="sch-notes" style="min-height:75px;" placeholder="Goals for this visit, items to raise..."></textarea></div>
+        <div class="div"></div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;"><input type="checkbox" checked id="ol-addcal" style="accent-color:var(--blue);"/><span>&#128197; Add to Program Calendar</span></label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;"><input type="checkbox" checked id="ol-ics" style="accent-color:var(--blue);"/><span>Export as .ics (opens in Outlook)</span></label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;"><input type="checkbox" id="ol-remind" style="accent-color:var(--blue);"/><span>Set 1-hour reminder in Outlook</span></label>
+          <label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;"><input type="checkbox" id="ol-autolog" style="accent-color:var(--blue);"/><span>Pre-fill visit log after scheduling</span></label>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn bpri" style="flex:1;" id="sch-main-btn" onclick="scheduleVisit()">Schedule + Export to Outlook</button>
+          <button class="btn bgho" onclick="window.open('https://outlook.office.com/calendar','_blank')">Outlook Web</button>
+        </div>
+      </div>
+      <div class="card" id="sch-prev-card" style="display:none;">
+        <div class="ct" style="margin-bottom:10px;color:var(--orange);">Outstanding Actions for This Customer</div>
+        <div id="sch-prev-list"></div>
+      </div>
+      <!-- Scheduled visits for selected customer -->
+      <div class="card" id="sch-sched-card" style="display:none;margin-top:16px;border-left:4px solid var(--teal);">
+        <div class="ct" style="margin-bottom:10px;color:var(--teal);">&#9998; Ready to Log</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;">Scheduled visits for this customer — click to log them now.</div>
+        <div id="sch-sched-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISIT LOG -->
+<div class="panel" id="p-log">
+
+  <!-- PRE-VISIT OBJECTIVES BANNER (shown when launched from a scheduled visit with notes) -->
+  <div id="log-objectives-banner" style="display:none;background:linear-gradient(90deg,#b35c00,#e07800);border-radius:var(--r);padding:14px 18px;margin-bottom:18px;">
+    <div style="display:flex;align-items:flex-start;gap:12px;">
+      <div style="width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#127919;</div>
+      <div style="flex:1;">
+        <strong style="color:#fff;font-size:13px;display:block;margin-bottom:5px;">Pre-Visit Objectives</strong>
+        <div style="color:rgba(255,255,255,.9);font-size:12px;line-height:1.6;" id="log-objectives-content"></div>
+      </div>
+      <button class="btn bgho" style="color:#fff;border-color:rgba(255,255,255,.4);flex-shrink:0;" onclick="showUnmetObjectivesModal()">&#10011; Create Action from Objective</button>
+    </div>
+  </div>
+  <div id="quick-log-banner" style="display:none;background:linear-gradient(90deg,#006e5e,#1a9e8a);border-radius:var(--r);padding:14px 18px;margin-bottom:18px;align-items:center;gap:14px;">
+    <div style="width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#9998;</div>
+    <div style="flex:1;"><strong style="color:#fff;font-size:13px;" id="qlb-title">Logging visit</strong><div style="color:rgba(255,255,255,.7);font-size:12px;" id="qlb-sub"></div></div>
+    <button class="btn bgho" style="color:#fff;border-color:rgba(255,255,255,.4);" onclick="clearLog()">&#10005; Cancel</button>
+  </div>
+
+  <div class="g2">
+    <!-- LEFT: Core fields (always visible) -->
+    <div>
+      <div class="card mb">
+        <div class="chd" style="margin-bottom:14px;">
+          <div class="ct" style="color:var(--blue);">&#9998; Visit Details</div>
+          <button class="btn bsm bgho" onclick="showQuickLogModal()" title="Log a quick unscheduled visit">&#9889; Quick Log</button>
+        </div>
+        <div class="fg"><div class="fl">Customer</div><select class="fi" id="log-cust" onchange="onLogCust()"><option value="">-- Select customer --</option></select></div>
+        <div class="g2" style="gap:10px;">
+          <div class="fg"><div class="fl">Date of Visit</div><input class="fi" type="date" id="log-date"/></div>
+          <div class="fg"><div class="fl">Contact Met</div><input class="fi" type="text" id="log-contact" placeholder="Name / role"/></div>
+        </div>
+
+        <!-- Previous open actions for this customer (auto-shown) -->
+        <div id="log-prev-actions" style="display:none;margin-bottom:12px;">
+          <div class="shd" style="margin-top:4px;color:var(--orange);">Open Actions for This Customer</div>
+          <div id="log-prev-actions-list"></div>
+        </div>
+
+        <div class="shd" style="margin-top:4px;">What Was Discussed</div>
+        <div class="fg"><div class="fl">Products / Inks Discussed</div><input class="fi" type="text" id="log-tprod" placeholder="e.g. UV flexo, litho-lam, water-based..."/></div>
+        <div class="fg"><div class="fl">Key Discussion &amp; Feedback</div><textarea class="fi" id="log-comments" style="min-height:90px;" placeholder="Customer reactions, decisions made, interest levels, any concerns raised..."></textarea></div>
+        <div class="fg"><div class="fl">Next Action Point</div><input class="fi" type="text" id="log-tact" placeholder="What needs to happen next — this becomes an action item"/></div>
+
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button class="btn bsuc" style="flex:1;" onclick="saveLog()">&#10003; Save Visit Log</button>
+          <button class="btn bgho" onclick="exportLogWord()">&#8595; Word</button>
+          <button class="btn bgho" onclick="clearLog()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Advanced / optional fields -->
+    <div>
+      <div class="card mb" style="border-top:3px solid var(--border);">
+        <div class="chd" style="margin-bottom:10px;cursor:pointer;" onclick="toggleAdvancedLog()">
+          <div class="ct" style="color:var(--ink3);">&#9660; Advanced Fields <span style="font-size:11px;font-weight:400;">(IIF, previous actions, projects)</span></div>
+          <span id="adv-log-badge" class="pill pb" style="display:none;">Pre-filled</span>
+        </div>
+        <div id="adv-log-fields" style="display:none;">
+          <div class="shd" style="margin-top:0;">Previous Visit Action Points</div>
+          <div class="g3" style="gap:8px;">
+            <div><div class="fl">Products</div><input class="fi" type="text" id="lp-prod" placeholder="Product"/></div>
+            <div><div class="fl">Action Taken</div><input class="fi" type="text" id="lp-act" placeholder="What was done"/></div>
+            <div><div class="fl">Outcome</div><input class="fi" type="text" id="lp-upd" placeholder="Result"/></div>
+          </div>
+
+          <div class="shd">IIF / Active Enquiry</div>
+          <div class="g2" style="gap:10px;">
+            <div class="fg"><div class="fl">IIF Reference</div><input class="fi" type="text" id="log-iif" placeholder="IIF ref no."/></div>
+            <div class="fg"><div class="fl">Product / Ink</div><input class="fi" type="text" id="log-iif-prod" placeholder="Ink / product"/></div>
+          </div>
+          <div class="g2" style="gap:10px;">
+            <div class="fg"><div class="fl">IIF Status</div>
+              <select class="fi" id="log-iif-stat">
+                <option value="">Select...</option><option>Submitted</option><option>Under Review</option><option>Completed</option>
+              </select>
+            </div>
+            <div class="fg"><div class="fl">Target Close Date</div><input class="fi" type="date" id="log-iif-close"/></div>
+          </div>
+          <div class="fg"><div class="fl">IIF Summary</div><textarea class="fi" id="log-iif-sum" placeholder="Brief summary of enquiry progress..."></textarea></div>
+
+          <div class="shd">Projects &amp; Extra Notes</div>
+          <div class="g2" style="gap:10px;">
+            <div class="fg"><div class="fl">Active Projects</div><textarea class="fi" id="log-projects" style="min-height:70px;" placeholder="Current or upcoming projects..."></textarea></div>
+            <div class="fg"><div class="fl">General Notes</div><textarea class="fi" id="log-notes" style="min-height:70px;" placeholder="Decisions, observations, AOB..."></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer history preview -->
+      <div class="card" id="log-cust-history" style="display:none;">
+        <div class="ct" style="margin-bottom:10px;color:var(--blue-mid);">&#128203; Last Visit Summary</div>
+        <div id="log-cust-history-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="saved-logs" style="margin-top:20px;"></div>
+</div>
+
+<!-- CALENDAR -->
+<div class="panel" id="p-calendar">
+  <div class="olb" style="margin-bottom:16px;">
+    <div class="oli"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2.5" stroke="white" stroke-width="1.8"/><line x1="2" y1="8.5" x2="22" y2="8.5" stroke="white" stroke-width="1.4"/><line x1="7" y1="1.5" x2="7" y2="5.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/><line x1="17" y1="1.5" x2="17" y2="5.5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+    <div class="olt"><strong>Outlook Calendar View</strong><span>Import your Outlook calendar below, or open Outlook Web to view your full calendar.</span></div>
+    <button class="ollb" onclick="window.open('https://outlook.office.com/calendar','_blank')">Open Outlook Web</button>
+  </div>
+
+  <div class="cal-wrap mb" id="cal-main"></div>
+  <div class="card"><div class="chd"><div class="ct">Selected Day</div></div><div id="cal-detail" style="font-size:13px;color:var(--ink3);">Click a day to view scheduled visits.</div></div>
+</div>
+
+<!-- ADMIN DAY -->
+<div class="panel" id="p-admin">
+
+  <div class="g2 mb">
+
+    <!-- TODAY'S ADMIN LOG FORM -->
+    <div>
+      <div class="card mb">
+        <div class="chd" style="margin-bottom:14px;">
+          <div class="ct" style="color:var(--blue);">&#9998; Admin Day Log</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input class="fi" type="date" id="adm-date" style="width:auto;padding:6px 10px;font-size:12px;"/>
+            <span class="pill pb" id="adm-day-label">Today</span>
+          </div>
+        </div>
+
+        <div class="shd" style="margin-top:0;">What I Achieved Today</div>
+        <div id="achieved-list" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input class="fi" type="text" id="adm-achieved-input" placeholder="e.g. Replied to all outstanding emails..." style="flex:1;"
+            onkeydown="if(event.key==='Enter'){addAchieved();event.preventDefault();}"/>
+          <button class="btn bsuc bsm" onclick="addAchieved()">+ Add</button>
+        </div>
+
+        <div class="shd">Jobs for Next Admin Day</div>
+        <div id="todo-list" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <input class="fi" type="text" id="adm-todo-input" placeholder="e.g. Chase overdue IIF quotes..." style="flex:1;"
+            onkeydown="if(event.key==='Enter'){addTodo();event.preventDefault();}"/>
+          <input class="fi" type="date" id="adm-todo-due" style="width:auto;padding:6px 10px;font-size:12px;" title="Optional due date"/>
+          <button class="btn bora bsm" onclick="addTodo()">+ Add</button>
+        </div>
+
+        <div class="shd">General Notes</div>
+        <textarea class="fi" id="adm-notes" style="min-height:70px;" placeholder="Any other notes from today's admin session..."></textarea>
+
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="btn bpri" style="flex:1;" onclick="saveAdminDay()">&#10003; Save Admin Day</button>
+          <button class="btn bgho" onclick="exportAdminWord()">&#8595; Export Word</button>
+          <button class="btn bgho" onclick="clearAdminForm()">Clear</button>
+        </div>
+      </div>
+
+      <!-- CARRY FORWARD BANNER (shown when there are open todos from last session) -->
+      <div id="carry-forward-card" class="card" style="display:none;border-left:4px solid var(--orange);">
+        <div class="ct" style="margin-bottom:10px;color:var(--orange);">&#8634; Carry Forward from Last Admin Day</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;">These jobs were not completed last time. Click to add them to today's list.</div>
+        <div id="carry-forward-list"></div>
+        <button class="btn bora bsm" style="margin-top:8px;" onclick="carryAllForward()">Add all to today's To Do list</button>
+      </div>
+    </div>
+
+    <!-- STATS + QUICK SUMMARY -->
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="stat b" style="border-radius:var(--r);"><div class="sn" id="adm-total-days">0</div><div class="sl">Admin Days Logged</div></div>
+        <div class="stat g" style="border-radius:var(--r);"><div class="sn" id="adm-done-ct">0</div><div class="sl">Tasks Completed</div></div>
+        <div class="stat o" style="border-radius:var(--r);"><div class="sn" id="adm-open-ct">0</div><div class="sl">Open To Dos</div></div>
+        <div class="stat t" style="border-radius:var(--r);"><div class="sn" id="adm-overdue-ct">0</div><div class="sl">Overdue Tasks</div></div>
+      </div>
+
+      <!-- ALL OPEN TO DOS ACROSS ALL SESSIONS -->
+      <div class="card">
+        <div class="chd">
+          <div class="ct" style="color:var(--orange);">All Open Admin To Dos</div>
+          <span class="pill po" id="open-todos-ct">0</span>
+        </div>
+        <div id="all-open-todos"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN DAY HISTORY -->
+  <div class="card">
+    <div class="chd">
+      <div class="ct">Admin Day History</div>
+      <span class="pill pb" id="adm-hist-ct">0 sessions</span>
+    </div>
+    <div id="admin-history"></div>
+  </div>
+
+</div>
+
+<!-- SETTINGS -->
+<div class="panel" id="p-settings">
+  <div class="g2 mb">
+
+    <!-- MANAGE CUSTOMERS -->
+    <div class="card">
+      <div class="chd"><div class="ct" style="color:var(--blue);">Manage Customers</div><button class="btn bsm bpri" onclick="showAddCust()">+ Add Customer</button></div>
+      <div class="sbar" style="margin-bottom:10px;"><span style="color:var(--ink3);">&#9906;</span><input type="text" placeholder="Search customers..." id="set-cust-search" oninput="renderSetCusts()"/></div>
+      <div id="set-cust-list" style="max-height:380px;overflow-y:auto;"></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- REP SETTINGS -->
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px;color:var(--teal);">Your Details</div>
+        <div class="fg"><div class="fl">Your Name</div><input class="fi" type="text" id="set-rep-name" placeholder="e.g. John Smith" oninput="saveSettings()"/></div>
+        <div class="fg"><div class="fl">Your Email</div><input class="fi" type="email" id="set-rep-email" placeholder="john@huber.com" oninput="saveSettings()"/></div>
+        <div class="fg"><div class="fl">Territory / Region</div><input class="fi" type="text" id="set-rep-territory" placeholder="e.g. Midlands & North" oninput="saveSettings()"/></div>
+      </div>
+
+      <!-- VISIT FREQUENCY DEFAULTS -->
+      <div class="card">
+        <div class="ct" style="margin-bottom:14px;color:var(--orange);">Default Visit Frequencies</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px;">Set how often each account group should be visited (days). Used for overdue alerts.</div>
+        <div class="g2" style="gap:10px;">
+          <div class="fg"><div class="fl">GPI Sites</div><input class="fi" type="number" id="freq-GPI" value="30" min="1" oninput="saveSettings()"/></div>
+          <div class="fg"><div class="fl">Smurfit WestRock</div><input class="fi" type="number" id="freq-Smurfit" value="30" min="1" oninput="saveSettings()"/></div>
+          <div class="fg"><div class="fl">Huber Sites</div><input class="fi" type="number" id="freq-Huber" value="30" min="1" oninput="saveSettings()"/></div>
+          <div class="fg"><div class="fl">Independent</div><input class="fi" type="number" id="freq-other" value="45" min="1" oninput="saveSettings()"/></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="g2 mb">
+
+    <!-- NOTIFICATION PREFERENCES -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:14px;color:var(--purple);">Alert Preferences</div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;">
+          <span>Show frequency overdue alerts on dashboard</span>
+          <input type="checkbox" id="pref-freq-alerts" checked style="accent-color:var(--blue);width:15px;height:15px;" onchange="saveSettings()"/>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;">
+          <span>Highlight overdue actions in red</span>
+          <input type="checkbox" id="pref-red-actions" checked style="accent-color:var(--blue);width:15px;height:15px;" onchange="saveSettings()"/>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;">
+          <span>Auto-set action status to "overdue" if past due date</span>
+          <input type="checkbox" id="pref-auto-overdue" checked style="accent-color:var(--blue);width:15px;height:15px;" onchange="saveSettings()"/>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;">
+          <span>Show IIF count on dashboard</span>
+          <input type="checkbox" id="pref-iif-dash" checked style="accent-color:var(--blue);width:15px;height:15px;" onchange="saveSettings()"/>
+        </label>
+        <label style="display:flex;align-items:center;justify-content:space-between;font-size:13px;cursor:pointer;">
+          <span>Confirm before deleting a visit log</span>
+          <input type="checkbox" id="pref-del-confirm" checked style="accent-color:var(--blue);width:15px;height:15px;" onchange="saveSettings()"/>
+        </label>
+      </div>
+    </div>
+
+    <!-- DATA MANAGEMENT -->
+    <div class="card">
+      <div class="ct" style="margin-bottom:14px;color:var(--red);">Data Management</div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;line-height:1.7;">All data is stored in your browser. Use the backup button regularly to save a copy. To move data to another PC, export then import the backup file.</div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <button class="btn bout" style="width:100%;justify-content:flex-start;" onclick="exportBackup()">&#8595; Backup all data (JSON)</button>
+        <label class="btn bgho" style="width:100%;justify-content:flex-start;cursor:pointer;">
+          &#8593; Restore from backup
+          <input type="file" accept=".json" style="display:none;" onchange="importBackup(this.files[0])"/>
+        </label>
+        <div class="div" style="margin:4px 0;"></div>
+        <button class="btn bgho" style="width:100%;justify-content:flex-start;color:var(--red);" onclick="clearAllData()">&#9888; Clear all data &amp; start fresh</button>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--ink3);">
+        <strong style="color:var(--ink);">Storage used:</strong> <span id="storage-used">Calculating...</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUGGESTIONS BOX -->
+  <div class="card" style="border-left:4px solid var(--blue);">
+    <div class="ct" style="margin-bottom:14px;">Future Feature Ideas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div style="padding:12px 14px;background:var(--blue-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--blue);margin-bottom:4px;">Route Planner</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">Plan the most efficient driving route when visiting multiple customers in one day, linked to Google Maps.</div></div>
+      <div style="padding:12px 14px;background:var(--green-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--green);margin-bottom:4px;">Auto Follow-up Email</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">After saving a visit log, auto-draft a follow-up email to the customer listing all action points.</div></div>
+      <div style="padding:12px 14px;background:var(--orange-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--orange);margin-bottom:4px;">Product Catalogue</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">A searchable list of Huber products/inks you can tag visits and IIFs against for trend analysis.</div></div>
+      <div style="padding:12px 14px;background:var(--purple-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--purple);margin-bottom:4px;">Monthly Manager Report</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">One-click email or PDF summary for your manager showing visits, IIF wins, and open actions.</div></div>
+      <div style="padding:12px 14px;background:var(--teal-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--teal);margin-bottom:4px;">Customer Notes &amp; History</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">A persistent notes page per customer showing all past visit logs, IIFs and actions in one timeline.</div></div>
+      <div style="padding:12px 14px;background:var(--amber-light);border-radius:10px;"><div style="font-weight:700;font-size:12px;color:var(--amber);margin-bottom:4px;">Win/Loss Tracker</div><div style="font-size:11px;color:var(--ink3);line-height:1.6;">Track IIF outcomes over time and show your win rate, average deal time, and revenue by customer.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- IIF PIPELINE -->
+<div class="panel" id="p-iif">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+    <div><div style="font-size:16px;font-weight:700;">IIF Pipeline</div><div style="font-size:12px;color:var(--ink3);">Click a card to advance its status through the pipeline</div></div>
+    <button class="btn bpri" onclick="showAddIIF()">+ Add IIF</button>
+  </div>
+  <div class="kanban" id="kanban"></div>
+  <div id="iif-log-section" style="margin-top:24px;"></div>
+</div>
+
+<!-- ACTIONS -->
+<div class="panel" id="p-actions">
+  <div style="display:flex;align-items:center;gap:10px;background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:16px;">
+    <span style="font-size:12px;font-weight:700;color:var(--ink3);white-space:nowrap;">Filter by month:</span>
+    <select class="fi" id="act-month-filter" style="max-width:180px;padding:6px 10px;font-size:13px;" onchange="renderActions()">
+      <option value="">All time</option>
+    </select>
+    <span id="act-filter-summary" style="font-size:12px;color:var(--ink3);margin-left:4px;"></span>
+    <button class="btn bsm bgho" style="margin-left:auto;" onclick="document.getElementById('act-month-filter').value='';renderActions();">Clear</button>
+  </div>
+  <div class="card mb"><div class="chd"><div class="ct" style="color:var(--red);">Overdue</div><span class="pill pr" id="ov-ct">0</span></div><div id="ap-over"></div></div>
+  <div class="card mb"><div class="chd"><div class="ct" style="color:var(--amber);">Due This Week</div><span class="pill pa" id="wk-ct">0</span></div><div id="ap-week"></div></div>
+  <div class="card mb"><div class="chd"><div class="ct">All Open Actions</div><button class="btn bsm bpri" onclick="showAddAction()">+ Add</button></div><div id="ap-all"></div></div>
+  <div class="card" style="margin-top:16px;border-left:4px solid var(--green);">
+    <div class="chd">
+      <div class="ct" style="color:var(--green);">&#10003; Completed Actions</div>
+      <span class="pill pg" id="done-ct">0</span>
+    </div>
+    <div id="ap-done"></div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="panel" id="p-reports">
+
+  <!-- Year in Review Banner -->
+  <div style="background:linear-gradient(135deg,#0054a6,#1a7fd4);border-radius:var(--r);padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;gap:18px;">
+    <div style="font-size:36px;">&#128196;</div>
+    <div style="flex:1;">
+      <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">Year-in-Review Report</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.7);">Export a full annual report — every visit, every action, every IIF result — formatted for Word. Perfect for manager reviews.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <label style="color:rgba(255,255,255,.8);font-size:12px;font-weight:600;">Year:</label>
+        <select class="fi" id="rpt-year" style="width:90px;padding:6px 10px;font-size:13px;background:#fff;" onchange=""></select>
+      </div>
+      <button class="btn" style="background:#fff;color:var(--blue);font-weight:700;white-space:nowrap;" onclick="exportYearReport()">&#8595; Download Year Report</button>
+    </div>
+  </div>
+
+  <div class="g2 mb">
+    <div class="card">
+      <div class="ct" style="margin-bottom:16px;">Custom Visit Report</div>
+      <div class="fg"><div class="fl">Customer</div><select class="fi" id="rpt-cust"><option value="">All customers</option></select></div>
+      <div class="g2" style="gap:10px;">
+        <div class="fg"><div class="fl">From Date</div><input class="fi" type="date" id="rpt-from"/></div>
+        <div class="fg"><div class="fl">To Date</div><input class="fi" type="date" id="rpt-to"/></div>
+      </div>
+      <div class="fg">
+        <div class="fl">Specific Date (optional)</div>
+        <input class="fi" type="date" id="rpt-specific-date" onchange="onRptSpecificDate()"/>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px;">Set a single date to override From/To and report on one day only</div>
+      </div>
+      <div class="fg"><div class="fl">Report Type</div>
+        <select class="fi" id="rpt-type">
+          <option value="visit">Visit Logs Report</option>
+          <option value="actions">Action Points Report</option>
+          <option value="iif">IIF Pipeline Report</option>
+          <option value="full">Full Territory Report</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn bpri" style="flex:1;" onclick="exportReport('word')">&#8595; Download Word</button>
+        <button class="btn" style="flex:1;background:var(--red);color:#fff;" onclick="exportReport('pdf')" onmouseover="this.style.background='#922b21'" onmouseout="this.style.background='var(--red)'">&#8595; Download PDF</button>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid var(--purple);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <div style="font-size:22px;">&#129302;</div>
+        <div>
+          <div class="ct" style="color:var(--purple);">AI Customer Summary Export</div>
+          <div style="font-size:11px;color:var(--ink3);margin-top:2px;">Export a plain-text file for a specific customer &amp; date range — drop it into any AI tool for an instant summary.</div>
+        </div>
+      </div>
+      <div class="div" style="margin:10px 0 14px;"></div>
+      <div class="fg"><div class="fl">Customer</div>
+        <select class="fi" id="qe-cust" onchange="updateQEPrompt()"><option value="">All customers</option></select>
+      </div>
+      <div class="g2" style="gap:10px;">
+        <div class="fg"><div class="fl">From Date</div><input class="fi" type="date" id="qe-from" onchange="updateQEPrompt()"/></div>
+        <div class="fg"><div class="fl">To Date</div><input class="fi" type="date" id="qe-to" onchange="updateQEPrompt()"/></div>
+      </div>
+      <button class="btn" style="width:100%;background:var(--purple);color:#fff;justify-content:center;margin-bottom:10px;" onmouseover="this.style.background='#311b92'" onmouseout="this.style.background='var(--purple)'" onclick="exportCustomerAISummary()">&#8595; Download AI Summary (.txt)</button>
+      <div id="qe-preview" style="display:none;padding:10px 12px;background:var(--purple-light);border-radius:8px;font-size:11px;color:var(--purple);font-weight:600;"></div>
+      <div class="div" style="margin:12px 0 10px;"></div>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Suggested AI Prompt</div>
+        <div id="qe-prompt-text" style="font-size:11px;color:var(--ink2);line-height:1.7;font-style:italic;"></div>
+        <button class="btn bsm" style="margin-top:8px;background:var(--purple);color:#fff;border:none;" onclick="copyQEPrompt()">&#10064; Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+  <div class="card"><div class="ct" style="margin-bottom:14px;">Account Visit Frequency Status</div><div id="freq-table"></div></div>
+
+  <!-- AI SUMMARY PACK -->
+  <div style="background:linear-gradient(135deg,#1a0050,#4527a0);border-radius:var(--r);padding:22px 26px;margin-top:20px;">
+    <div style="display:flex;align-items:flex-start;gap:18px;">
+      <div style="font-size:38px;flex-shrink:0;">&#129302;</div>
+      <div style="flex:1;">
+        <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:5px;">AI Summary Pack</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.72);line-height:1.7;margin-bottom:14px;">Export everything — visit logs, admin days, actions and IIFs — as a single plain-text file optimised for AI tools. Drop it into ChatGPT, Claude or Copilot and ask it to summarise your year.</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <select id="ai-year" style="padding:7px 12px;border-radius:7px;border:none;font-size:13px;font-weight:600;width:100px;"></select>
+          <button class="btn" style="background:#fff;color:#4527a0;font-weight:700;" onclick="exportAIPack()">&#8595; Download AI Pack (.txt)</button>
+          <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);font-weight:600;" onclick="showAIPrompt()">&#128172; Show AI Prompt</button>
+        </div>
+      </div>
+    </div>
+    <div id="ai-prompt-box" style="display:none;margin-top:16px;background:rgba(0,0,0,.3);border-radius:10px;padding:14px 16px;">
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Copy this prompt into your AI tool after uploading the file:</div>
+      <div id="ai-prompt-text" style="font-size:12px;color:rgba(255,255,255,.9);line-height:1.7;font-style:italic;"></div>
+      <button class="btn bsm" style="margin-top:10px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);" onclick="copyAIPrompt()">&#10064; Copy Prompt</button>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<div id="modal-bg" style="display:none;" class="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CUSTOMERS=[
+  {name:"Auditing at Huber",group:"Huber",freq:30},{name:"Cartonage",group:"other",freq:60},
+  {name:"Celle",group:"other",freq:60},{name:"CRP",group:"other",freq:45},
+  {name:"Darley",group:"other",freq:45},{name:"Falconer",group:"other",freq:60},
+  {name:"Glossop Cartons",group:"other",freq:45},{name:"GPI Bardon",group:"GPI",freq:30},
+  {name:"GPI Bristol",group:"GPI",freq:30},{name:"GPI Cambridge",group:"GPI",freq:30},
+  {name:"GPI Gateshead",group:"GPI",freq:30},{name:"GPI HH",group:"GPI",freq:30},
+  {name:"GPI Leeds",group:"GPI",freq:30},{name:"Harrison Packaging",group:"other",freq:45},
+  {name:"Home Office / Huber",group:"Huber",freq:14},{name:"Huber Munich",group:"Huber",freq:90},
+  {name:"KWP",group:"other",freq:60},{name:"Smurfit WestRock Leicester",group:"Smurfit",freq:30},
+  {name:"Printpack",group:"other",freq:45},{name:"Qualvis",group:"other",freq:45},
+  {name:"Smurfit WestRock Bristol",group:"Smurfit",freq:30},{name:"Smurfit WestRock Newcastle",group:"Smurfit",freq:30},
+  {name:"MM Deeside",group:"other",freq:60},{name:"Beatus Cartons",group:"other",freq:60},
+  {name:"Herbert Walker",group:"other",freq:60},{name:"Alexir Packaging",group:"other",freq:60}
+];
+const GCOL={GPI:["#ddeeff","#0054a6"],Smurfit:["#e8f5e9","#1a7a3a"],Huber:["#e8f0ff","#3a67b0"]};
+const OCOL=[["#fdeee6","#d94f00"],["#e0f4f1","#006e5e"],["#fff3e0","#b35c00"],["#fce4ec","#880e4f"],["#ede7f6","#4527a0"],["#e6f5eb","#1a7a3a"],["#ddeeff","#0054a6"]];
+function custColor(name){const c=CUSTOMERS.find(x=>x.name===name);if(!c)return["#ddeeff","#0054a6"];if(GCOL[c.group])return GCOL[c.group];const i=CUSTOMERS.filter(x=>x.group==="other").findIndex(x=>x.name===name);return OCOL[i%OCOL.length];}
+function ini(n){return n.split(' ').map(w=>w[0]).filter(Boolean).slice(0,2).join('').toUpperCase();}
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let visits=ls('hvm_v',[]);
+let logs=ls('hvm_l',[]);
+let actions=ls('hvm_a',[]);
+let iifs=ls('hvm_i',[]);
+let iifArchive=ls('hvm_iif_archive',[]);
+function save(){lss('hvm_v',visits);lss('hvm_l',logs);lss('hvm_a',actions);lss('hvm_i',iifs);lss('hvm_iif_archive',iifArchive);}
+
+function toast(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.background=col||'#1a7a3a';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3200);}
+function today(){return new Date().toISOString().split('T')[0];}
+function fmtDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+function daysSince(d){if(!d)return 999;return Math.floor((new Date()-new Date(d+'T12:00:00'))/86400000);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+let custGrp='all',selCalDate=null,calY=new Date().getFullYear(),calM=new Date().getMonth();
+
+function tab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  const tabs=['dash','customers','schedule','log','calendar','iif','actions','reports','admin','settings'];
+  tabs.forEach((t,i)=>{if(t===id)document.querySelectorAll('.nb')[i].classList.add('on');});
+  if(id==='dash')renderDash();if(id==='customers')renderCusts();
+  if(id==='calendar')renderCal();if(id==='iif')renderKanban();
+  if(id==='actions')renderActions();if(id==='reports')renderFreqTable();if(id==='settings'){renderSetCusts();loadSettings();updateStorageDisplay();}if(id==='admin'){renderAdminHistory();}
+}
+
+function populateSel(){
+  ['sch-cust','log-cust','rpt-cust'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const def=id==='rpt-cust'?'<option value="">All customers</option>':'<option value="">-- Select customer --</option>';
+    el.innerHTML=def+getAllCustomers().map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  });
+}
+
+function renderDash(){
+  const now=new Date();
+  const pfx=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('s-vis').textContent=visits.filter(v=>v.status==='complete'&&v.date&&v.date.startsWith(pfx)).length;
+  document.getElementById('s-up').textContent=visits.filter(v=>v.status==='scheduled').length;
+  const openA=actions.filter(a=>!a.done);
+  const td=today();
+  const ovA=openA.filter(a=>a.status==='overdue'||(a.due&&a.due<td));
+  document.getElementById('s-act').textContent=openA.length;
+  document.getElementById('s-ov-txt').textContent=ovA.length+' overdue';
+  document.getElementById('s-iif').textContent=iifs.filter(i=>!['Closed \u2014 Won','Closed \u2014 Lost'].includes(i.status)).length;
+  const up=visits.filter(v=>v.status==='scheduled').sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
+  document.getElementById('d-up').innerHTML=up.length?up.map(vRowH).join(''):'<div style="color:var(--ink3);font-size:13px;padding:8px 0;">No visits scheduled. <button class="btn bsm bout" onclick="tab(\'schedule\')">Schedule one</button></div>';
+  const alerts=getFreqAlerts().slice(0,5);
+  document.getElementById('d-freq-ct').textContent=getFreqAlerts().length+' alerts';
+  document.getElementById('d-freq').innerHTML=alerts.length?alerts.map(a=>{const col=custColor(a.name);return`<div class="vr" style="cursor:pointer;" onclick="quickSch('${a.name}')"><div class="vav" style="background:${col[0]};color:${col[1]};">${ini(a.name)}</div><div class="vi"><div class="vn">${a.name}</div><div class="vm">${a.ds<0?'Never visited':'Last visit '+a.ds+' days ago \u00b7 target every '+a.freq+' days'}</div></div><div class="vright"><span class="pill ${a.ds<0||a.urgent?'pr':'po'}">${a.ds<0?'Never':a.urgent?'Overdue':'Due soon'}</span></div></div>`;}).join(''):'<div style="color:var(--ink3);font-size:13px;padding:8px 0;">All accounts on schedule!</div>';
+  document.getElementById('d-recent').innerHTML=logs.slice(0,3).map(logRowH).join('')||'<div style="color:var(--ink3);font-size:13px;padding:8px 0;">No visit logs yet.</div>';
+  renderDashAdminWidget();
+}
+
+function renderDashAdminWidget(){
+  // Gather all open todos across all admin days
+  var allOpen=[];
+  adminDays.forEach(function(day){
+    (day.todos||[]).forEach(function(t,ti){
+      if(!t.done) allOpen.push({text:t.text,due:t.due,date:day.date,dayId:day.id,idx:ti});
+    });
+  });
+  allOpen.sort(function(a,b){
+    if(!a.due&&!b.due) return 0; if(!a.due) return 1; if(!b.due) return -1;
+    return a.due.localeCompare(b.due);
+  });
+  var overdueCt=allOpen.filter(function(t){return t.due&&t.due<today();}).length;
+  // Update stat card
+  document.getElementById('s-adm-open').textContent=allOpen.length;
+  document.getElementById('s-adm-over').textContent=overdueCt+' overdue';
+  document.getElementById('d-adm-badge').textContent=allOpen.length+' open';
+  // Last admin day label
+  var labelEl=document.getElementById('d-adm-next-label');
+  if(adminDays.length){
+    var last=adminDays[0];
+    var openCt=(last.todos||[]).filter(function(t){return !t.done;}).length;
+    labelEl.innerHTML='Last session: <strong>'+fmtDate(last.date)+'</strong>'+(openCt?' &bull; <span style="color:var(--orange);">'+openCt+' job'+(openCt!==1?'s':'')+' still open</span>':'<span style="color:var(--green);"> &bull; all done!</span>');
+  } else {
+    labelEl.innerHTML='<span style="color:var(--ink3);">No admin days logged yet</span>';
+  }
+  // Show up to 4 open todos
+  var todosEl=document.getElementById('d-adm-todos');
+  if(!allOpen.length){
+    todosEl.innerHTML='<div style="font-size:12px;color:var(--green);padding:6px 0;">&#10003; All admin to-dos complete!</div>';
+  } else {
+    todosEl.innerHTML=allOpen.slice(0,4).map(function(t){
+      var overdue=t.due&&t.due<today();
+      return '<div class="ar" style="margin-bottom:5px;">'
+        +'<span style="color:var(--purple);font-size:13px;flex-shrink:0;">&#9632;</span>'
+        +'<input value="'+esc(t.text)+'" readonly style="flex:1;font-size:11px;"/>'
+        +(t.due?'<span style="font-size:10px;font-weight:700;color:'+(overdue?'var(--red)':'var(--amber)')+';">'+fmtDate(t.due)+'</span>':'')
+        +'<button class="btn bsm bsuc" style="padding:3px 8px;font-size:10px;" onclick="quickDoneTodo('+t.dayId+','+t.idx+')">&#10003;</button>'
+        +'</div>';
+    }).join('');
+    if(allOpen.length>4){
+      todosEl.innerHTML+='<div style="font-size:11px;color:var(--ink3);padding:4px 0;">+'+(allOpen.length-4)+' more &mdash; <button class="btn bsm bgho" style="padding:3px 8px;font-size:10px;" onclick="tab(&apos;admin&apos;)">View all</button></div>';
+    }
+  }
+  // Quick-start new admin day button
+  var logEl=document.getElementById('d-adm-log-preview');
+  logEl.innerHTML='<button class="btn bout bsm" style="width:100%;justify-content:center;margin-top:4px;" onclick="tab(&apos;admin&apos;)">&#9998; Start / view Admin Day</button>';
+}
+
+function quickDoneTodo(dayId,idx){
+  var day=adminDays.find(function(d){return d.id===dayId;});
+  if(!day||!day.todos[idx]) return;
+  day.todos[idx].done=true;
+  lss('hvm_admin',adminDays);
+  renderDashAdminWidget();
+  updateAdminStats();
+  renderAllOpenTodos();
+  renderAdminHistory();
+  toast('Task marked done!');
+}
+
+function getFreqAlerts(){
+  return getAllCustomers().map(c=>{
+    const lv=visits.filter(v=>v.cust===c.name&&v.status==='complete').sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const ds=lv?daysSince(lv.date):-1;
+    return{name:c.name,freq:c.freq,ds,urgent:ds>=0&&ds>c.freq,due:ds>=0&&ds>(c.freq*.8)};
+  }).filter(a=>a.ds<0||a.urgent||a.due).sort((a,b)=>b.ds-a.ds);
+}
+
+function vRowH(v){const col=custColor(v.cust);const canLog=v.status==='scheduled'&&v.date<=today();return`<div class="vr"><div class="vav" style="background:${col[0]};color:${col[1]};">${ini(v.cust)}</div><div class="vi"><div class="vn">${v.cust}</div><div class="vm">${v.contact||'No contact'} \u00b7 ${v.purpose||''}</div></div><div class="vright"><div class="vdate">${fmtDate(v.date)}</div><span class="pill ${v.status==='scheduled'?'pb':'pg'}">${v.status}</span>${canLog?`<div style="margin-top:4px;"><button class="btn bsm bsuc" style="font-size:10px;padding:3px 9px;" onclick="quickLog('${v.id}')">&#9998; Log Visit</button></div>`:''}</div></div>`;}
+function logRowH(l){const col=custColor(l.cust);return`<div class="vr"><div class="vav" style="background:${col[0]};color:${col[1]};">${ini(l.cust)}</div><div class="vi"><div class="vn">${l.cust}</div><div class="vm">${l.contact||''} \u00b7 ${l.tprod||''}</div></div><div class="vright"><div class="vdate">${fmtDate(l.date)}</div><span class="pill pg">Logged</span></div></div>`;}
+
+function renderCusts(){
+  const q=document.getElementById('cust-search').value.toLowerCase();
+  const g=document.getElementById('cust-grid');g.innerHTML='';
+  CUSTOMERS.filter(c=>{
+    if(q&&!c.name.toLowerCase().includes(q))return false;
+    return custGrp==='all'||c.group===custGrp;
+  }).forEach(c=>{
+    const col=custColor(c.name);
+    const lv=visits.filter(v=>v.cust===c.name&&v.status==='complete').sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const ds=lv?daysSince(lv.date):-1;const alert=ds<0||ds>c.freq;
+    const d=document.createElement('div');d.className='cc';
+    d.innerHTML=`<div class="cav" style="background:${col[0]};color:${col[1]};">${ini(c.name)}</div><div><div class="cn">${c.name}</div><div class="cl">${lv?'Last: '+fmtDate(lv.date):'No visits yet'}</div></div>${alert?'<span class="pill pr" style="margin-left:auto;flex-shrink:0;">!</span>':''}`;
+    d.onclick=()=>showCustHistory(c.name);g.appendChild(d);
+  });
+}
+function setGrp(el,g){document.querySelectorAll('.chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');custGrp=g;renderCusts();}
+
+function onSchCust(){
+  const cust=document.getElementById('sch-cust').value;
+  const card=document.getElementById('sch-prev-card'),list=document.getElementById('sch-prev-list');
+  const open=actions.filter(a=>a.cust===cust&&!a.done);
+  if(open.length){card.style.display='block';list.innerHTML=open.map(a=>`<div class="ar"><div class="artag">${esc(a.cust)}</div><input value="${esc(a.text)}" readonly/><span class="ardue" style="color:${a.status==='overdue'?'var(--red)':'var(--amber)'}">${a.status==='overdue'?'Overdue':'This week'}</span></div>`).join('');}
+  else card.style.display='none';
+  // Show scheduled visits for this customer ready to log
+  const scard=document.getElementById('sch-sched-card'),slist=document.getElementById('sch-sched-list');
+  const sched=visits.filter(v=>v.cust===cust&&v.status==='scheduled').sort((a,b)=>a.date.localeCompare(b.date));
+  if(sched.length){
+    scard.style.display='block';
+    slist.innerHTML=sched.map(v=>`<div class="vr" style="margin-bottom:6px;"><div class="vi"><div class="vn">${fmtDate(v.date)}${v.time?' at '+v.time:''}</div><div class="vm">${v.purpose||'No purpose set'}</div></div><button class="btn bsm bsuc" onclick="quickLog('${v.id}')">&#9998; Log Now</button></div>`).join('');
+  } else scard.style.display='none';
+}
+function setPurp(el,v){document.querySelectorAll('#purp-chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');document.getElementById('sch-purp').value=v;}
+function scheduleVisit(){
+  const cust=document.getElementById('sch-cust').value,date=document.getElementById('sch-date').value;
+  if(!cust||!date){toast('Please select a customer and date','#c0392b');return;}
+  const v={id:Date.now(),cust,contact:document.getElementById('sch-contact').value,date,time:document.getElementById('sch-time').value,dur:document.getElementById('sch-dur').value,from:document.getElementById('sch-from').value,purpose:document.getElementById('sch-purp').value,prods:document.getElementById('sch-prods').value,email:document.getElementById('sch-email').value,notes:document.getElementById('sch-notes').value,status:'scheduled'};
+  visits.unshift(v);save();
+  if(document.getElementById('ol-addcal').checked)addToCalendar(v);
+  if(document.getElementById('ol-ics').checked)downloadICS(v);
+  if(document.getElementById('ol-autolog').checked){tab('log');document.getElementById('log-cust').value=cust;document.getElementById('log-date').value=date;document.getElementById('log-contact').value=v.contact;}
+  if(!document.getElementById('ol-addcal').checked) toast('\u2713 Visit scheduled! '+(document.getElementById('ol-ics').checked?'.ics downloaded \u2014 open to add to Outlook':''));
+}
+
+var _schAdminMode = false;
+function toggleAdminDaySchedule(){
+  _schAdminMode = !_schAdminMode;
+  const btn = document.getElementById('sch-admin-toggle-btn');
+  const custFields = document.getElementById('sch-customer-fields');
+  const adminFields = document.getElementById('sch-admin-fields');
+  const purposeFields = document.getElementById('sch-purpose-fields');
+  const mainBtn = document.getElementById('sch-main-btn');
+  const schPrevCard = document.getElementById('sch-prev-card');
+  const schSchedCard = document.getElementById('sch-sched-card');
+  if(_schAdminMode){
+    custFields.style.display='none';
+    adminFields.style.display='block';
+    purposeFields.style.display='none';
+    if(schPrevCard) schPrevCard.style.display='none';
+    if(schSchedCard) schSchedCard.style.display='none';
+    btn.textContent='\u2715 Cancel Admin Day';
+    btn.style.background='var(--orange-light)';btn.style.color='var(--orange)';btn.style.borderColor='var(--orange)';
+    mainBtn.textContent='\u2713 Schedule Admin Day + Export to Outlook';
+    mainBtn.style.background='var(--purple)';
+    mainBtn.onclick=scheduleAdminDay;
+  } else {
+    custFields.style.display='block';
+    adminFields.style.display='none';
+    purposeFields.style.display='block';
+    btn.textContent='\u2712 Schedule Admin Day';
+    btn.style.background='var(--purple-light)';btn.style.color='var(--purple)';btn.style.borderColor='var(--purple)';
+    mainBtn.textContent='Schedule + Export to Outlook';
+    mainBtn.style.background='';
+    mainBtn.onclick=scheduleVisit;
+  }
+}
+
+function scheduleAdminDay(){
+  const date = document.getElementById('sch-date').value;
+  if(!date){toast('Please select a date for the Admin Day','#c0392b');return;}
+  const label = document.getElementById('sch-admin-label').value.trim() || 'Admin Day';
+  const time = document.getElementById('sch-time').value || '09:00';
+  const dur = document.getElementById('sch-dur').value || 'Full day';
+
+  // 1. Export .ics for admin day
+  if(document.getElementById('ol-ics').checked){
+    const remind = document.getElementById('ol-remind').checked;
+    const dt = date.replace(/-/g,'');
+    const tm = time.replace(':','')+'00';
+    const durMap={'30 minutes':3000,'1 hour':10000,'1.5 hours':13000,'2 hours':20000,'Half day':40000,'Full day':80000};
+    const durVal = durMap[dur]||80000;
+    const endTm = String(parseInt(tm.slice(0,4))+durVal).padStart(8,'0');
+    let cal=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Huber Visit Manager//EN\r\nBEGIN:VEVENT\r\nDTSTART:${dt}T${tm}Z\r\nDTEND:${dt}T${endTm}Z\r\nSUMMARY:Admin Day: ${label}\r\nDESCRIPTION:Admin Day logged in Huber Visit Manager.\\nFocus: ${label}\r\nCATEGORIES:ADMIN\r\n`;
+    if(remind) cal+=`BEGIN:VALARM\r\nTRIGGER:-PT1H\r\nACTION:DISPLAY\r\nDESCRIPTION:Admin Day reminder\r\nEND:VALARM\r\n`;
+    cal+='END:VEVENT\r\nEND:VCALENDAR';
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([cal],{type:'text/calendar;charset=utf-8'}));a.download=`admin-day-${date}.ics`;a.click();URL.revokeObjectURL(a.href);
+  }
+
+  // 2. Pull activities from Admin Day Log matching this date into the Visit Log
+  const matchingAdminDay = adminDays.find(d => d.date === date);
+  let transferred = 0;
+  if(matchingAdminDay){
+    const achievedText = (matchingAdminDay.achieved||[]).join('\n\u2022 ');
+    const todosText = (matchingAdminDay.todos||[]).map(t=>t.text+(t.due?' (due '+fmtDate(t.due)+')':'')+(t.done?' [Done]':t.due&&t.due<date?' [Overdue]':' [Open]')).join('\n\u2022 ');
+    const commentParts = [];
+    if(achievedText) commentParts.push('What I achieved:\n\u2022 '+achievedText);
+    if(todosText) commentParts.push('Jobs / To Do:\n\u2022 '+todosText);
+    if(matchingAdminDay.notes) commentParts.push('Notes:\n'+matchingAdminDay.notes);
+
+    if(commentParts.length){
+      // Check if an admin day log entry already exists for this date
+      const existingIdx = logs.findIndex(l=>l.isAdminDay && l.date===date);
+      const logEntry = {
+        id: existingIdx>=0 ? logs[existingIdx].id : Date.now(),
+        isAdminDay: true,
+        cust: 'Admin Day \u2014 '+label,
+        date: date,
+        contact: '',
+        tprod: '',
+        tact: '',
+        comments: commentParts.join('\n\n'),
+        prevProd:'',prevAct:'',prevUpd:'',
+        iif:'',iifProd:'',iifStat:'',iifClose:'',iifSum:'',
+        projects:'',notes:matchingAdminDay.notes||''
+      };
+      if(existingIdx>=0){logs[existingIdx]=logEntry;}
+      else{logs.unshift(logEntry);}
+      transferred = commentParts.length;
+      save();
+      renderSavedLogs();
+      renderDash();
+    }
+  }
+
+  const msg = transferred
+    ? '\u2713 Admin Day scheduled! .ics downloaded & activities transferred to Visit Log.'
+    : '\u2713 Admin Day scheduled! .ics downloaded. (No Admin Day Log found for this date \u2014 log activities in the Admin Day tab and reschedule to transfer them.)';
+  toast(msg);
+
+  // Reset admin day mode
+  toggleAdminDaySchedule();
+  document.getElementById('sch-admin-label').value='';
+}
+function downloadICS(v){
+  const dt=v.date.replace(/-/g,''),tm=(v.time||'09:00').replace(':','')+'00';
+  const durMap={'30 minutes':3000,'1 hour':10000,'1.5 hours':13000,'2 hours':20000,'Half day':40000,'Full day':80000};
+  const dur=durMap[document.getElementById('sch-dur').value]||10000;
+  const endTm=String(parseInt(tm.slice(0,4))+dur).padStart(8,'0');
+  const remind=document.getElementById('ol-remind').checked;
+  let cal=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Huber Visit Manager//EN\r\nBEGIN:VEVENT\r\nDTSTART:${dt}T${tm}Z\r\nDTEND:${dt}T${endTm}Z\r\nSUMMARY:Customer Visit: ${v.cust}\r\nDESCRIPTION:Contact: ${v.contact||'N/A'}\\nPurpose: ${v.purpose||'N/A'}\\nProducts: ${v.prods||'N/A'}\r\nLOCATION:${v.cust}\r\n`;
+  if(v.email)cal+=`ATTENDEE;CN=${v.email}:mailto:${v.email}\r\n`;
+  if(remind)cal+=`BEGIN:VALARM\r\nTRIGGER:-PT1H\r\nACTION:DISPLAY\r\nDESCRIPTION:Visit reminder: ${v.cust}\r\nEND:VALARM\r\n`;
+  cal+='END:VEVENT\r\nEND:VCALENDAR';
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([cal],{type:'text/calendar;charset=utf-8'}));a.download=`visit-${v.cust.replace(/[\s\/]/g,'-')}-${v.date}.ics`;a.click();URL.revokeObjectURL(a.href);
+}
+function addToCalendar(v){
+  // Navigate to the Calendar tab and jump to the visit's month/date
+  const parts=v.date.split('-');
+  calY=parseInt(parts[0]);
+  calM=parseInt(parts[1])-1;
+  selCalDate=v.date;
+  tab('calendar');
+  // After tab switch renders the calendar, highlight the day and show detail
+  setTimeout(function(){
+    renderCal();
+    calDay(v.date);
+    // Scroll the calendar into view
+    const calEl=document.getElementById('cal-main');
+    if(calEl)calEl.scrollIntoView({behavior:'smooth',block:'start'});
+    toast('\u2713 Visit added to Program Calendar \u2014 date highlighted below','#0054a6');
+  },80);
+}
+function quickSch(name){tab('schedule');setTimeout(()=>{document.getElementById('sch-cust').value=name;onSchCust();},50);}
+
+function saveLog(){
+  const cust=document.getElementById('log-cust').value;
+  if(!cust){toast('Please select a customer','#c0392b');return;}
+  const l={id:Date.now(),cust,date:document.getElementById('log-date').value||today(),contact:document.getElementById('log-contact').value,prevProd:document.getElementById('lp-prod').value,prevAct:document.getElementById('lp-act').value,prevUpd:document.getElementById('lp-upd').value,iif:document.getElementById('log-iif').value,iifProd:document.getElementById('log-iif-prod').value,iifStat:document.getElementById('log-iif-stat').value,iifClose:document.getElementById('log-iif-close').value,iifSum:document.getElementById('log-iif-sum').value,tprod:document.getElementById('log-tprod').value,tact:document.getElementById('log-tact').value,comments:document.getElementById('log-comments').value,projects:document.getElementById('log-projects').value,notes:document.getElementById('log-notes').value};
+  logs.unshift(l);
+  const vi=visits.find(v=>v.cust===cust&&v.status==='scheduled');if(vi)vi.status='complete';
+  if(l.tact)actions.unshift({id:Date.now(),cust,text:l.tact,due:'',status:'week',done:false});
+  if(l.iif&&l.iifProd)iifs.unshift({id:Date.now(),cust,ref:l.iif,prod:l.iifProd,status:l.iifStat||'Submitted',days:0});
+  save();
+  renderSavedLogs();
+  renderDash();
+  // Hide the quick-log banner and reset the form state
+  document.getElementById('quick-log-banner').style.display='none';
+  document.getElementById('log-prev-actions').style.display='none';
+  document.getElementById('log-cust-history').style.display='none';
+  toast('\u2713 Visit log saved! Use the \u2709 Email button below to send a follow-up.');
+}
+function clearLog(){
+  ['log-cust','log-date','log-contact','lp-prod','lp-act','lp-upd','log-iif','log-iif-prod','log-iif-sum','log-iif-close','log-tprod','log-tact','log-comments','log-projects','log-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('log-iif-stat').value='';
+  document.getElementById('log-date').value=today();
+  const banner=document.getElementById('quick-log-banner');banner.style.display='none';
+  const objBanner=document.getElementById('log-objectives-banner');if(objBanner)objBanner.style.display='none';
+  document.getElementById('log-prev-actions').style.display='none';
+  document.getElementById('log-cust-history').style.display='none';
+  document.getElementById('adv-log-fields').style.display='none';
+  document.getElementById('adv-log-badge').style.display='none';
+}
+function renderSavedLogs(){
+  const c=document.getElementById('saved-logs');
+  if(!logs.length){c.innerHTML='';return;}
+  c.innerHTML='<div class="shd" style="margin-top:0;">Saved Visit Logs ('+logs.length+')</div>'+logs.map((l,i)=>{
+    const col=l.isAdminDay?['var(--purple-light)','var(--purple)']:custColor(l.cust);
+    const quickBadge=l.isAdminDay?'<span class="pill" style="background:var(--purple-light);color:var(--purple);">Admin Day</span>':l.quickEntry?'<span class="pill pa" style="font-size:9px;">Quick</span>':'<span class="pill pg">Logged</span>';
+    // Find linked visit to get pre-visit objectives
+    const linkedVisit=l.visitId?visits.find(v=>String(v.id)===String(l.visitId)):null;
+    const hasObjectives=linkedVisit&&linkedVisit.notes&&linkedVisit.notes.trim();
+    return`<div style="background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);${l.isAdminDay?'border-left:4px solid var(--purple);':''}overflow:hidden;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);border-bottom:.5px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;border-radius:7px;background:${col[0]};color:${col[1]};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;">${ini(l.cust)}</div>
+          <div><div style="font-weight:700;font-size:13px;">${esc(l.cust)}</div><div style="font-size:11px;color:var(--ink3);">${esc(l.contact||'No contact')} \u00b7 ${fmtDate(l.date)}</div></div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
+          ${quickBadge}
+          <button class="btn bsm bgho" onclick="draftFollowUpEmail(${i})" title="Draft follow-up email">&#9993; Email</button>
+          <button class="btn bsm bgho" onclick="exportSingleLog(${i})">&#8595; Word</button>
+          <button class="btn bsm bred" onclick="deleteLog(${i})">Delete</button>
+        </div>
+      </div>
+      ${hasObjectives?`<div style="padding:10px 16px;background:var(--amber-light);border-bottom:.5px solid rgba(179,92,0,.2);display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-size:13px;flex-shrink:0;">&#127919;</span>
+        <div style="flex:1;">
+          <div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;">Pre-Visit Objectives</div>
+          <div style="font-size:12px;color:var(--ink2);line-height:1.6;">${esc(linkedVisit.notes).replace(/\n/g,'<br>')}</div>
+        </div>
+        <button class="btn bsm" style="background:var(--amber);color:#fff;white-space:nowrap;flex-shrink:0;" onclick="showActionFromLog(${i})">&#10011; Unmet Objective &rarr; Action</button>
+      </div>`:''}
+      <div style="padding:13px 16px;font-size:12px;color:var(--ink2);">
+        ${l.notes?`<div style="margin-bottom:4px;"><span style="color:var(--ink);font-weight:700;">Discussed: </span>${esc(l.notes)}</div>`:''}
+        ${l.tprod?`<div style="margin-bottom:4px;"><span style="color:var(--teal);font-weight:700;">Products: </span>${esc(l.tprod)}</div>`:''}
+        ${l.comments?`<div style="margin-bottom:4px;">${esc(l.comments)}</div>`:''}
+        ${l.iif?`<div style="margin-bottom:4px;"><span style="color:var(--orange);font-weight:700;">IIF: </span>${esc(l.iif)} \u2014 ${esc(l.iifStat)}</div>`:''}
+        ${l.tact?`<div><span style="color:var(--blue);font-weight:700;">Action: </span>${esc(l.tact)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function deleteLog(i){logs.splice(i,1);save();renderSavedLogs();toast('Log deleted');}
+
+function showActionFromLog(logIdx){
+  const l=logs[logIdx];
+  if(!l) return;
+  const linkedVisit=l.visitId?visits.find(v=>String(v.id)===String(l.visitId)):null;
+  const notesText=linkedVisit&&linkedVisit.notes?linkedVisit.notes:'';
+  const lines=notesText.split('\n').map(x=>x.trim()).filter(Boolean);
+  const custOpts=getAllCustomers().map(c=>`<option value="${esc(c.name)}"${c.name===l.cust?' selected':''}>${esc(c.name)}</option>`).join('');
+  document.getElementById('modal-content').innerHTML=`
+    <h3>&#127919; Unmet Objective &rarr; Action Point</h3>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Pick an objective that wasn't achieved and create a tracked action point from it.</div>
+    ${lines.length?`<div class="fg"><div class="fl">Select Objective</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+        ${lines.map((line,i)=>`<label style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:12px;background:var(--surface2);">
+          <input type="radio" name="sal-obj" value="${esc(line)}" style="margin-top:2px;accent-color:var(--blue);" ${i===0?'checked':''}/>
+          <span>${esc(line)}</span>
+        </label>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">Or type a custom action:</div>
+    `:''}
+    <div class="fg"><div class="fl">Action Description</div><input class="fi" type="text" id="sal-text" placeholder="Describe the follow-up action..." value="${lines.length?esc(lines[0]):''}"/></div>
+    <div class="fg"><div class="fl">Customer</div><select class="fi" id="sal-cust">${custOpts}</select></div>
+    <div class="g2" style="gap:10px;">
+      <div class="fg"><div class="fl">Due Date</div><input class="fi" type="date" id="sal-due"/></div>
+      <div class="fg"><div class="fl">Priority</div><select class="fi" id="sal-stat"><option value="week">This week</option><option value="overdue">Overdue / urgent</option></select></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn bgho" onclick="closeModal()">Cancel</button>
+      <button class="btn bpri" onclick="confirmActionFromLog()">&#10010; Create Action Point</button>
+    </div>`;
+  document.getElementById('modal-bg').style.display='flex';
+  setTimeout(()=>{
+    document.querySelectorAll('input[name="sal-obj"]').forEach(r=>{
+      r.addEventListener('change',()=>{document.getElementById('sal-text').value=r.value;});
+    });
+  },50);
+}
+function confirmActionFromLog(){
+  const cust=document.getElementById('sal-cust').value;
+  const text=document.getElementById('sal-text').value.trim();
+  const due=document.getElementById('sal-due').value;
+  const status=document.getElementById('sal-stat').value;
+  if(!cust||!text){toast('Please fill in the action and customer','#c0392b');return;}
+  actions.unshift({id:Date.now(),cust,text,due,status,done:false});
+  save();renderActions();closeModal();
+  toast('\u2713 Action created: '+text);
+}
+
+function renderCal(){
+  const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DN=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const first=new Date(calY,calM,1);let sd=first.getDay()-1;if(sd<0)sd=6;
+  const dim=new Date(calY,calM+1,0).getDate(),pdim=new Date(calY,calM,0).getDate(),ts=today();
+  let h=`<div class="cal-hd"><button class="cal-nav" onclick="calNav(-1)">&#8249;</button><div class="cal-hd-t">${MN[calM]} ${calY}</div><button class="cal-nav" onclick="calNav(1)">&#8250;</button></div><div class="cal-wd-row">${DN.map(d=>`<div class="cal-wd">${d}</div>`).join('')}</div><div class="cal-days">`;
+  for(let i=0;i<sd;i++)h+=`<div class="cal-day other"><div class="cal-dn">${pdim-sd+1+i}</div></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calY}-${String(calM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dvs=visits.filter(v=>v.date===ds);
+    h+=`<div class="cal-day${ds===ts?' today':''}${selCalDate===ds?' sel':''}" onclick="calDay('${ds}')"><div class="cal-dn">${d}</div>${dvs.map(v=>`<div class="cal-evt${v.status==='complete'?' done':''}">${v.cust.split(' ')[0]}</div>`).join('')}</div>`;
+  }
+  const rem=42-(sd+dim);for(let i=1;i<=rem;i++)h+=`<div class="cal-day other"><div class="cal-dn">${i}</div></div>`;
+  h+='</div>';
+  document.getElementById('cal-main').innerHTML=h;
+}
+function calNav(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCal();}
+function calDay(d){
+  selCalDate=d;renderCal();
+  const dvs=visits.filter(v=>v.date===d);
+  const el=document.getElementById('cal-detail');
+  if(!dvs.length){
+    el.innerHTML=`<div style="color:var(--ink3);font-size:13px;">No visits on ${fmtDate(d)}. <button class="btn bsm bout" onclick="tab('schedule')">Schedule one</button></div>`;
+    return;
+  }
+  el.innerHTML=dvs.map(v=>calEventCard(v)).join('');
+}
+
+function calEventCard(v){
+  const col=custColor(v.cust);
+  const statusPill=v.status==='complete'?'pg':v.status==='cancelled'?'pr':'pb';
+  const fromOL=v.fromOutlook?'<span class="pill" style="background:var(--blue-light);color:var(--blue);font-size:9px;margin-left:4px;">Outlook</span>':'';
+  const hasLog=logs.some(l=>l.visitId===String(v.id));
+  return `<div class="vr" style="cursor:pointer;margin-bottom:8px;" onclick="showVisitModal('${v.id}','log')">
+    <div class="vav" style="background:${col[0]};color:${col[1]};">${ini(v.cust)}</div>
+    <div class="vi">
+      <div class="vn">${esc(v.cust)}${fromOL}${hasLog?'<span class="pill pg" style="font-size:9px;margin-left:5px;">Logged</span>':''}</div>
+      <div class="vm">${v.contact?esc(v.contact)+' &bull; ':''} ${v.purpose?esc(v.purpose):'No purpose set'}</div>
+      ${v.prods?`<div class="vm" style="margin-top:2px;">&#128230; ${esc(v.prods)}</div>`:''}
+    </div>
+    <div class="vright">
+      <div class="vdate">${v.time||''}</div>
+      <span class="pill ${statusPill}">${v.status}</span>
+      <div style="margin-top:5px;display:flex;flex-direction:column;gap:4px;">
+        <button class="btn bsm bsuc" style="font-size:10px;padding:3px 8px;" onclick="event.stopPropagation();showVisitModal('${v.id}','log')">&#9998; ${hasLog?'Edit Log':'Log Visit'}</button>
+        <button class="btn bsm bgho" style="font-size:10px;padding:3px 8px;" onclick="event.stopPropagation();showVisitModal('${v.id}','details')">Details</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+const ICOLS=['Submitted','Under Review','Completed'];
+const ICOLORS=['var(--blue)','var(--amber)','var(--green)'];
+function iifStageDays(iif){
+  if(iif.statusDate){const d=Math.floor((Date.now()-new Date(iif.statusDate).getTime())/(1000*60*60*24));return Math.max(0,d);}
+  return iif.days||0;
+}
+function renderKanban(){
+  document.getElementById('kanban').innerHTML=ICOLS.map((col,ci)=>{
+    const cards=iifs.filter(i=>i.status===col);
+    const isCompleted=col==='Completed';
+    return`<div class="kcol"><div class="kcol-hd" style="color:${ICOLORS[ci]};">${col}<span class="pill" style="background:${ICOLORS[ci]}20;color:${ICOLORS[ci]};">${cards.length}</span></div>${cards.map(iif=>{const d=iifStageDays(iif);const removeBtn=isCompleted?`<button class="btn bsm bred" style="margin-top:6px;width:100%;font-size:10px;" onclick="event.stopPropagation();removeIIF(${iif.id})">&#10005; Remove</button>`:'';return`<div class="kcard" onclick="moveIIF(${iif.id})" title="Click to advance status"><div class="kcard-cust">${esc(iif.cust)}</div><div class="kcard-prod">${esc(iif.prod)}</div><div class="kcard-ref">${esc(iif.ref)}</div><span class="kcard-days" style="background:${d>30?'var(--red-light)':d>14?'var(--amber-light)':'var(--green-light)'};color:${d>30?'var(--red)':d>14?'var(--amber)':'var(--green)'}">${d} day${d!==1?'s':''} in stage</span>${removeBtn}</div>`;}).join('')}<button class="kbtn" onclick="addIIFToCol('${col}')">+ Add</button></div>`;
+  }).join('');
+  renderIIFLog();
+}
+function moveIIF(id){const iif=iifs.find(i=>i.id===id);if(!iif)return;const next=ICOLS[(ICOLS.indexOf(iif.status)+1)%ICOLS.length];iif.status=next;iif.statusDate=new Date().toISOString();save();renderKanban();toast('Moved to: '+next);}
+function removeIIF(id){
+  const iif=iifs.find(i=>i.id===id);
+  if(!iif)return;
+  if(!confirm('Remove this IIF from the pipeline?\n\n'+iif.ref+' — '+iif.cust+'\n\nIt will be saved in the IIF log below.'))return;
+  iif.removedDate=new Date().toISOString().split('T')[0];
+  iifArchive.unshift(iif);
+  iifs=iifs.filter(i=>i.id!==id);
+  save();renderKanban();toast('IIF archived to log');
+}
+function renderIIFLog(){
+  const el=document.getElementById('iif-log-section');
+  if(!el)return;
+  if(!iifArchive.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card" style="border-top:4px solid var(--teal);">
+    <div class="chd"><div class="ct" style="color:var(--teal);">&#128203; IIF Archive Log <span class="pill pt" style="margin-left:6px;">${iifArchive.length}</span></div></div>
+    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--surface2);">
+        <th style="padding:8px 10px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">Customer</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">IIF Ref</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">Product</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">Final Stage</th>
+        <th style="padding:8px 10px;text-align:left;font-weight:700;border-bottom:1.5px solid var(--border);">Removed</th>
+      </tr></thead>
+      <tbody>${iifArchive.map((iif,i)=>`<tr style="background:${i%2===0?'var(--surface)':'var(--surface2)'}">
+        <td style="padding:8px 10px;">${esc(iif.cust)}</td>
+        <td style="padding:8px 10px;font-family:monospace;font-weight:700;">${esc(iif.ref)}</td>
+        <td style="padding:8px 10px;">${esc(iif.prod||'-')}</td>
+        <td style="padding:8px 10px;"><span class="pill pg">${esc(iif.status)}</span></td>
+        <td style="padding:8px 10px;color:var(--ink3);">${iif.removedDate?fmtDate(iif.removedDate):'-'}</td>
+      </tr>`).join('')}</tbody>
+    </table></div></div>`;
+}
+function addIIFToCol(col){document.getElementById('modal-content').innerHTML=`<h3>Add IIF \u2014 ${col}</h3><div class="fg"><div class="fl">Customer</div><select class="fi" id="m-cust"><option value="">Select...</option>${getAllCustomers().map(c=>`<option>${esc(c.name)}</option>`).join('')}</select></div><div class="fg"><div class="fl">IIF Reference</div><input class="fi" type="text" id="m-ref" placeholder="IIF-2026-xxx"/></div><div class="fg"><div class="fl">Product / Ink</div><input class="fi" type="text" id="m-prod" placeholder="Product name"/></div><div class="modal-btns"><button class="btn bpri" onclick="confirmIIF('${col}')">Add to Pipeline</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>`;document.getElementById('modal-bg').style.display='flex';}
+function confirmIIF(col){const cust=document.getElementById('m-cust').value,ref=document.getElementById('m-ref').value,prod=document.getElementById('m-prod').value;if(!cust||!ref)return;iifs.unshift({id:Date.now(),cust,ref,prod,status:col,days:0,statusDate:new Date().toISOString()});save();renderKanban();closeModal();toast('IIF added to pipeline');}
+function showAddIIF(){addIIFToCol('Submitted');}
+
+function populateActMonths(){
+  const sel=document.getElementById('act-month-filter');
+  if(!sel)return;
+  const months=new Set();
+  actions.forEach(a=>{
+    const d=a.due||a.completedDate||'';
+    if(d)months.add(d.slice(0,7));
+  });
+  const sorted=[...months].sort((a,b)=>b.localeCompare(a));
+  const cur=sel.value;
+  sel.innerHTML='<option value="">All time</option>'+sorted.map(m=>{
+    const [y,mo]=m.split('-');
+    const label=new Date(y,parseInt(mo)-1,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+    return`<option value="${m}"${m===cur?' selected':''}>${label}</option>`;
+  }).join('');
+}
+function renderActions(){
+  populateActMonths();
+  const mf=document.getElementById('act-month-filter');
+  const filterMonth=mf?mf.value:'';
+  const filterFn=a=>{
+    if(!filterMonth)return true;
+    const d=a.due||a.completedDate||'';
+    return d.startsWith(filterMonth);
+  };
+  const allFiltered=actions.filter(filterFn);
+  const td=today();
+  // Dynamically classify: if due date is in the past (and not done), treat as overdue regardless of stored status
+  const isOverdue=a=>!a.done&&(a.status==='overdue'||(a.due&&a.due<td));
+  const isWeek=a=>!a.done&&!isOverdue(a)&&a.status==='week';
+  const over=allFiltered.filter(isOverdue);
+  const week=allFiltered.filter(isWeek);
+  const done=allFiltered.filter(a=>a.done);
+  const openAll=allFiltered.filter(a=>!a.done);
+  // Summary label
+  const sumEl=document.getElementById('act-filter-summary');
+  if(sumEl)sumEl.textContent=filterMonth?`Showing ${allFiltered.length} action${allFiltered.length!==1?'s':''}`:'' ;
+  document.getElementById('ov-ct').textContent=over.length;
+  document.getElementById('wk-ct').textContent=week.length;
+  document.getElementById('ap-over').innerHTML=over.length?over.map(aRow).join(''):'<div style="color:var(--ink3);font-size:12px;padding:8px 0;">None overdue</div>';
+  document.getElementById('ap-week').innerHTML=week.length?week.map(aRow).join(''):'<div style="color:var(--ink3);font-size:12px;padding:8px 0;">None due this week</div>';
+  document.getElementById('ap-all').innerHTML=openAll.map(aRow).join('')||'<div style="color:var(--ink3);font-size:12px;padding:8px 0;">No open actions!</div>';
+  document.getElementById('done-ct').textContent=done.length;
+  document.getElementById('ap-done').innerHTML=done.length?done.map(aDoneRow).join(''):'<div style="color:var(--ink3);font-size:12px;padding:8px 0;">No completed actions yet.</div>';
+}
+function aRow(a){return`<div class="ar"><div class="artag">${esc(a.cust)}</div><input value="${esc(a.text)}" readonly/><span class="ardue" style="color:${a.status==='overdue'?'var(--red)':'var(--amber)'}">${a.due?fmtDate(a.due):a.status}</span><div class="ar-btns"><button class="btn bsm bgho" onclick="editAction(${a.id})">&#9998; Edit</button><button class="btn bsm bsuc" onclick="doneAction(${a.id})">Done</button></div></div>`;}
+function aDoneRow(a){return`<div class="ar"><div class="artag" style="background:var(--green-light);color:var(--green);">&#10003; ${esc(a.cust)}</div><input value="${esc(a.text)}" readonly style="color:var(--ink);font-weight:500;"/><span class="ardue" style="color:var(--green);font-size:11px;">${a.due?fmtDate(a.due):'Completed'}</span></div>`;}
+function doneAction(id){const a=actions.find(x=>x.id===id);if(a)a.done=true;save();renderActions();toast('Action marked complete');}
+function editAction(id){const a=actions.find(x=>x.id===id);if(!a)return;document.getElementById('modal-content').innerHTML=`<h3>Edit Action Point</h3><div class="fg"><div class="fl">Customer</div><select class="fi" id="ea-cust"><option value="">Select...</option>${getAllCustomers().map(c=>`<option${a.cust===c.name?' selected':''}>${esc(c.name)}</option>`).join('')}</select></div><div class="fg"><div class="fl">Action</div><input class="fi" type="text" id="ea-text" value="${esc(a.text)}" placeholder="Describe the action required"/></div><div class="g2" style="gap:10px;"><div class="fg"><div class="fl">Due Date</div><input class="fi" type="date" id="ea-due" value="${a.due||''}"/></div><div class="fg"><div class="fl">Priority</div><select class="fi" id="ea-stat"><option value="week"${a.status==='week'?' selected':''}>This week</option><option value="overdue"${a.status==='overdue'?' selected':''}>Overdue</option></select></div></div><div class="modal-btns"><button class="btn bpri" onclick="confirmEditAction(${id})">Save Changes</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>`;document.getElementById('modal-bg').style.display='flex';}
+function confirmEditAction(id){const a=actions.find(x=>x.id===id);if(!a)return;const cust=document.getElementById('ea-cust').value,text=document.getElementById('ea-text').value,due=document.getElementById('ea-due').value,status=document.getElementById('ea-stat').value;if(!cust||!text)return;a.cust=cust;a.text=text;a.due=due;a.status=status;save();renderActions();closeModal();toast('Action updated');}
+function showAddAction(){document.getElementById('modal-content').innerHTML=`<h3>Add Action Point</h3><div class="fg"><div class="fl">Customer</div><select class="fi" id="ma-cust"><option value="">Select...</option>${getAllCustomers().map(c=>`<option>${esc(c.name)}</option>`).join('')}</select></div><div class="fg"><div class="fl">Action</div><input class="fi" type="text" id="ma-text" placeholder="Describe the action required"/></div><div class="g2" style="gap:10px;"><div class="fg"><div class="fl">Due Date</div><input class="fi" type="date" id="ma-due"/></div><div class="fg"><div class="fl">Priority</div><select class="fi" id="ma-stat"><option value="week">This week</option><option value="overdue">Overdue</option></select></div></div><div class="modal-btns"><button class="btn bpri" onclick="confirmAction()">Add Action</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>`;document.getElementById('modal-bg').style.display='flex';}
+function confirmAction(){const cust=document.getElementById('ma-cust').value,text=document.getElementById('ma-text').value,due=document.getElementById('ma-due').value,status=document.getElementById('ma-stat').value;if(!cust||!text)return;actions.unshift({id:Date.now(),cust,text,due,status,done:false});save();renderActions();closeModal();toast('Action added');}
+function showUnmetObjectivesModal(){
+  const banner=document.getElementById('log-objectives-banner');
+  const vid=banner&&banner.dataset.visitId;
+  const cust=document.getElementById('log-cust').value;
+  const v=vid?visits.find(x=>String(x.id)===String(vid)):null;
+  const notesText=v&&v.notes?v.notes:'';
+  // Split objectives by newline; filter blanks
+  const lines=notesText.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length&&!cust){toast('No objectives found','#c0392b');return;}
+  const custOpts=getAllCustomers().map(c=>`<option value="${esc(c.name)}"${c.name===cust?' selected':''}>${esc(c.name)}</option>`).join('');
+  document.getElementById('modal-content').innerHTML=`
+    <h3>&#127919; Create Action from Unmet Objective</h3>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Select an objective that wasn't completed and turn it into a tracked action point.</div>
+    ${lines.length?`<div class="fg"><div class="fl">Select Objective</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;" id="obj-list">
+        ${lines.map((l,i)=>`<label style="display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:12px;background:var(--surface2);">
+          <input type="radio" name="obj-pick" value="${esc(l)}" style="margin-top:2px;accent-color:var(--blue);" ${i===0?'checked':''}/>
+          <span>${esc(l)}</span>
+        </label>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin-bottom:10px;">Or type a custom action below:</div>
+    `:''}
+    <div class="fg"><div class="fl">Action Description</div><input class="fi" type="text" id="umo-text" placeholder="Describe the follow-up action required..." value="${lines.length?esc(lines[0]):''}"/></div>
+    <div class="fg"><div class="fl">Customer</div><select class="fi" id="umo-cust">${custOpts}</select></div>
+    <div class="g2" style="gap:10px;">
+      <div class="fg"><div class="fl">Due Date</div><input class="fi" type="date" id="umo-due"/></div>
+      <div class="fg"><div class="fl">Priority</div><select class="fi" id="umo-stat"><option value="week">This week</option><option value="overdue">Overdue / urgent</option></select></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn bgho" onclick="closeModal()">Cancel</button>
+      <button class="btn bpri" onclick="confirmUnmetAction()">&#10010; Create Action Point</button>
+    </div>`;
+  // Wire up radio buttons to auto-fill the text input
+  document.getElementById('modal-bg').style.display='flex';
+  setTimeout(()=>{
+    document.querySelectorAll('input[name="obj-pick"]').forEach(r=>{
+      r.addEventListener('change',()=>{document.getElementById('umo-text').value=r.value;});
+    });
+  },50);
+}
+function confirmUnmetAction(){
+  const cust=document.getElementById('umo-cust').value;
+  const text=document.getElementById('umo-text').value.trim();
+  const due=document.getElementById('umo-due').value;
+  const status=document.getElementById('umo-stat').value;
+  if(!cust||!text){toast('Please fill in the action and customer','#c0392b');return;}
+  actions.unshift({id:Date.now(),cust,text,due,status,done:false});
+  save();renderActions();closeModal();
+  toast('\u2713 Action created: '+text);
+}
+
+
+
+function showVisitModal(vid, openTab){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  if(!v){toast('Event not found','#c0392b');return;}
+  const col=custColor(v.cust);
+  // Find any existing log for this visit
+  const existingLog=logs.find(l=>l.visitId===String(vid));
+  const isLogged=!!existingLog || v.status==='complete';
+  const activeTab=openTab||(v.status==='scheduled'?'details':'log');
+
+  document.getElementById('modal-content').style.maxWidth='640px';
+  document.getElementById('modal-content').innerHTML=`
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:.5px solid var(--border);">
+      <div style="width:44px;height:44px;border-radius:10px;background:${col[0]};color:${col[1]};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">${ini(v.cust)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(v.cust)}</div>
+        <div style="font-size:12px;color:var(--ink3);">${fmtDate(v.date)}${v.time?' at '+v.time:''}${v.purpose?' &bull; '+esc(v.purpose):''}</div>
+      </div>
+      <span class="pill ${v.status==='complete'?'pg':v.status==='cancelled'?'pr':'pb'}" style="font-size:11px;white-space:nowrap;">${v.status}</span>
+    </div>
+
+    <!-- Tab bar -->
+    <div style="display:flex;gap:4px;background:var(--surface2);border-radius:9px;padding:4px;margin-bottom:18px;">
+      <button id="vtab-details" onclick="vmSwitchTab('details','${vid}')" style="flex:1;padding:8px;border:none;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:${activeTab==='details'?'var(--blue)':'transparent'};color:${activeTab==='details'?'#fff':'var(--ink3)'};">
+        &#9650; Visit Details
+      </button>
+      <button id="vtab-log" onclick="vmSwitchTab('log','${vid}')" style="flex:1;padding:8px;border:none;border-radius:7px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;background:${activeTab==='log'?'var(--teal)':'transparent'};color:${activeTab==='log'?'#fff':'var(--ink3)'};">
+        &#9998; Visit Log${existingLog?' &#10003;':''}
+      </button>
+    </div>
+
+    <!-- DETAILS TAB -->
+    <div id="vm-tab-details" style="display:${activeTab==='details'?'block':'none'};">
+      <div class="g2" style="gap:10px;margin-bottom:10px;">
+        <div class="fg"><div class="fl">Customer</div>
+          <select class="fi" id="vm-cust">${getAllCustomers().map(c=>`<option value="${esc(c.name)}"${c.name===v.cust?' selected':''}>${esc(c.name)}</option>`).join('')}</select>
+        </div>
+        <div class="fg"><div class="fl">Status</div>
+          <select class="fi" id="vm-status">
+            <option value="scheduled"${v.status==='scheduled'?' selected':''}>Scheduled</option>
+            <option value="complete"${v.status==='complete'?' selected':''}>Complete</option>
+            <option value="cancelled"${v.status==='cancelled'?' selected':''}>Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2" style="gap:10px;margin-bottom:10px;">
+        <div class="fg"><div class="fl">Date</div><input class="fi" type="date" id="vm-date" value="${v.date||''}"/></div>
+        <div class="fg"><div class="fl">Time</div><input class="fi" type="time" id="vm-time" value="${v.time||''}"/></div>
+      </div>
+      <div class="fg"><div class="fl">Contact</div><input class="fi" type="text" id="vm-contact" value="${esc(v.contact||'')}" placeholder="Contact name"/></div>
+      <div class="fg"><div class="fl">Contact Email</div><input class="fi" type="email" id="vm-email" value="${esc(v.email||'')}" placeholder="name@company.com"/></div>
+      <div class="g2" style="gap:10px;">
+        <div class="fg"><div class="fl">Duration</div>
+          <select class="fi" id="vm-dur">
+            <option${(v.dur||'')==='30 minutes'?' selected':''}>30 minutes</option>
+            <option${(v.dur||'1 hour')==='1 hour'?' selected':''}>1 hour</option>
+            <option${(v.dur||'')==='1.5 hours'?' selected':''}>1.5 hours</option>
+            <option${(v.dur||'')==='2 hours'?' selected':''}>2 hours</option>
+            <option${(v.dur||'')==='Half day'?' selected':''}>Half day</option>
+            <option${(v.dur||'')==='Full day'?' selected':''}>Full day</option>
+          </select>
+        </div>
+        <div class="fg"><div class="fl">Travel From</div><input class="fi" type="text" id="vm-from" value="${esc(v.from||'')}" placeholder="Your previous location"/></div>
+      </div>
+      <div class="fg"><div class="fl">Purpose</div><input class="fi" type="text" id="vm-purpose" value="${esc(v.purpose||'')}" placeholder="Visit purpose"/></div>
+      <div class="fg"><div class="fl">Products / Inks Planned</div><input class="fi" type="text" id="vm-prods" value="${esc(v.prods||'')}" placeholder="Products, inks, topics to discuss..."/></div>
+      ${v.notes?`<div style="background:var(--amber-light);border:1.5px solid var(--amber);border-radius:10px;padding:13px 15px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">&#127919; Pre-Visit Notes / Objectives</div>
+        <textarea class="fi" id="vm-notes" style="min-height:80px;background:#fff;border-color:var(--amber);" placeholder="Goals for this visit, items to raise...">${esc(v.notes||'')}</textarea>
+      </div>`:`<div class="fg"><div class="fl">Pre-Visit Notes / Objectives</div><textarea class="fi" id="vm-notes" style="min-height:70px;" placeholder="Goals for this visit, items to raise...">${esc(v.notes||'')}</textarea></div>`}
+      ${v.location?`<div class="fg"><div class="fl">Location</div><input class="fi" type="text" id="vm-loc" value="${esc(v.location||'')}"/></div>`:''}
+      ${v.fromOutlook?`<div style="padding:8px 12px;background:var(--blue-light);border-radius:7px;font-size:11px;color:var(--blue);margin-bottom:10px;">&#128197; Imported from Outlook</div>`:''}
+      <div style="display:flex;justify-content:space-between;margin-top:16px;">
+        <button class="btn bred" onclick="deleteVisit('${vid}')">&#128465; Delete</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn bgho" onclick="closeModal()">Cancel</button>
+          <button class="btn bpri" onclick="saveVisitModal('${vid}')">Save Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOG TAB -->
+    <div id="vm-tab-log" style="display:${activeTab==='log'?'block':'none'};">
+      ${existingLog?`<div style="padding:8px 13px;background:var(--green-light);border-radius:8px;font-size:12px;color:var(--green);font-weight:600;margin-bottom:14px;">&#10003; Visit log saved — you can update it below and save again.</div>`:''}
+      <div class="fg">
+        <div class="fl">What Was Discussed</div>
+        <textarea class="fi" id="vm-discussed" style="min-height:75px;" placeholder="Key topics, decisions, what came up in conversation...">${esc(existingLog?existingLog.notes||'':'')}</textarea>
+      </div>
+      <div class="fg">
+        <div class="fl">Products / Inks Discussed</div>
+        <input class="fi" type="text" id="vm-tprod" value="${esc(existingLog?existingLog.tprod||'':v.prods||'')}" placeholder="e.g. UV flexo, litho-lam, water-based coatings..."/>
+      </div>
+      <div class="fg">
+        <div class="fl">Key Discussion &amp; Feedback</div>
+        <textarea class="fi" id="vm-comments" style="min-height:80px;" placeholder="Customer reactions, interest levels, concerns raised, any quotes or commitments...">${esc(existingLog?existingLog.comments||'':'')}</textarea>
+      </div>
+      <div class="fg">
+        <div class="fl">Next Action Point</div>
+        <input class="fi" type="text" id="vm-tact" value="${esc(existingLog?existingLog.tact||'':'')}" placeholder="What needs to happen next — this becomes an action item"/>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;">
+        <div style="font-size:11px;color:var(--ink3);">Saves to Visit Log &amp; creates action if filled</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn bgho" onclick="closeModal()">Cancel</button>
+          <button class="btn bgho" onclick="exportVisitWord('${vid}')">&#8595; Word</button>
+          <button class="btn bsuc" onclick="saveVisitLog('${vid}')">&#10003; Save Log</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('modal-bg').style.display='flex';
+}
+
+function vmSwitchTab(tab, vid){
+  document.getElementById('vm-tab-details').style.display = tab==='details' ? 'block' : 'none';
+  document.getElementById('vm-tab-log').style.display = tab==='log' ? 'block' : 'none';
+  document.getElementById('vtab-details').style.background = tab==='details' ? 'var(--blue)' : 'transparent';
+  document.getElementById('vtab-details').style.color = tab==='details' ? '#fff' : 'var(--ink3)';
+  document.getElementById('vtab-log').style.background = tab==='log' ? 'var(--teal)' : 'transparent';
+  document.getElementById('vtab-log').style.color = tab==='log' ? '#fff' : 'var(--ink3)';
+}
+
+function saveVisitLog(vid){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  if(!v) return;
+  const discussed=document.getElementById('vm-discussed').value.trim();
+  const tprod=document.getElementById('vm-tprod').value.trim();
+  const comments=document.getElementById('vm-comments').value.trim();
+  const tact=document.getElementById('vm-tact').value.trim();
+  if(!discussed && !tprod && !comments && !tact){
+    toast('Please fill in at least one log field','#c0392b'); return;
+  }
+  // Check if a log already exists for this visit and update it, or create new
+  const existingIdx=logs.findIndex(l=>l.visitId===String(vid));
+  const logEntry={
+    id: existingIdx>=0 ? logs[existingIdx].id : Date.now(),
+    visitId: String(vid),
+    cust: v.cust,
+    date: v.date||today(),
+    contact: v.contact||'',
+    notes: discussed,
+    tprod,
+    comments,
+    tact,
+    prevProd:'', prevAct:'', prevUpd:'',
+    iif:'', iifProd:'', iifStat:'', iifClose:'', iifSum:'',
+    projects:''
+  };
+  if(existingIdx>=0){
+    logs[existingIdx]=logEntry;
+  } else {
+    logs.unshift(logEntry);
+  }
+  // Mark visit as complete
+  v.status='complete';
+  // Create action item if filled
+  if(tact && existingIdx<0){
+    actions.unshift({id:Date.now(),cust:v.cust,text:tact,due:'',status:'week',done:false});
+  }
+  save();
+  renderSavedLogs();
+  renderDash();
+  renderCal();
+  if(selCalDate) calDay(selCalDate);
+  closeModal();
+  toast('\u2713 Visit log saved for '+v.cust);
+}
+
+function saveVisitModal(vid){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  if(!v) return;
+  v.cust=document.getElementById('vm-cust').value;
+  v.status=document.getElementById('vm-status').value;
+  v.date=document.getElementById('vm-date').value;
+  v.time=document.getElementById('vm-time').value;
+  v.contact=document.getElementById('vm-contact').value;
+  v.email=document.getElementById('vm-email').value;
+  v.dur=document.getElementById('vm-dur').value;
+  v.from=document.getElementById('vm-from').value;
+  v.purpose=document.getElementById('vm-purpose').value;
+  v.prods=document.getElementById('vm-prods').value;
+  v.notes=document.getElementById('vm-notes').value;
+  const locEl=document.getElementById('vm-loc');
+  if(locEl) v.location=locEl.value;
+  save();
+  closeModal();
+  renderCal();
+  if(selCalDate) calDay(selCalDate);
+  renderDash();
+  toast('\u2713 Event updated');
+}
+
+function deleteVisit(vid){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  const name=v?v.cust:'this event';
+  if(!confirm('Delete the visit for '+name+' on '+fmtDate(v?v.date:'')+'?\n\nThis cannot be undone.')) return;
+  visits=visits.filter(x=>String(x.id)!==String(vid));
+  save();
+  closeModal();
+  renderCal();
+  if(selCalDate) calDay(selCalDate);
+  renderDash();
+  toast('Event deleted','#c0392b');
+}
+
+function closeModal(){document.getElementById('modal-bg').style.display='none';}
+
+function renderFreqTable(){
+  const custs=getAllCustomers().map(c=>{
+    const lv=visits.filter(v=>v.cust===c.name&&v.status==='complete').sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const ds=lv?daysSince(lv.date):-1;
+    return{c,lv,ds};
+  }).sort((a,b)=>{
+    if(a.ds<0&&b.ds<0)return 0;
+    if(a.ds<0)return 1;
+    if(b.ds<0)return -1;
+    return a.ds-b.ds;
+  });
+  document.getElementById('freq-table').innerHTML=custs.map(({c,lv,ds})=>{
+    const st=ds<0?'Never visited':ds>c.freq?'Overdue':ds>(c.freq*.7)?'Due soon':'On track';
+    const sc=ds<0||ds>c.freq?'var(--red)':ds>(c.freq*.7)?'var(--amber)':'var(--green)';
+    const col=custColor(c.name);
+    return`<div class="vr" style="margin-bottom:6px;"><div class="vav" style="background:${col[0]};color:${col[1]};">${ini(c.name)}</div><div class="vi"><div class="vn">${c.name}</div><div class="vm">Target: every ${c.freq} days \u00b7 ${lv?'Last: '+fmtDate(lv.date):'No visits recorded'}</div></div><span class="pill" style="background:${sc}20;color:${sc};">${st}</span></div>`;
+  }).join('');
+}
+
+function dlDoc(html, fname){
+  const full=`<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"/><meta name="ProgId" content="Word.Document"/><style>@page{margin:2cm;}body{font-family:Calibri,sans-serif;font-size:11pt;color:#333;}h1{color:#1F4E79;font-size:18pt;text-align:center;border-bottom:2px solid #2E75B6;padding-bottom:8px;margin-bottom:4px;}h2{color:#1F4E79;font-size:14pt;margin-top:20pt;border-bottom:1px solid #ddd;padding-bottom:4px;}table{border-collapse:collapse;width:100%;margin:8pt 0;}th{background:#1F4E79;color:white;padding:6pt 8pt;font-size:10pt;text-align:left;}td{border:1px solid #ddd;padding:5pt 8pt;font-size:10pt;}tr:nth-child(even) td{background:#f9f9f9;}.meta{color:#666;font-size:10pt;text-align:center;margin-bottom:16pt;}.pb{page-break-before:always;}.note{color:#555;margin:6pt 0;font-size:10pt;}.lbl{font-weight:bold;color:#444;}</style></head><body>${html}</body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([full],{type:'application/vnd.ms-word;charset=utf-8'}));a.download=fname;a.click();URL.revokeObjectURL(a.href);
+}
+function hdr(title){const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});return`<h1>Huber Visit Manager</h1><h2>${esc(title)}</h2><p class="meta">Generated: ${now}</p>`;}
+function logBlock(l){
+  return`<h2 class="pb">${esc(l.cust)} &mdash; ${fmtDate(l.date)}</h2>
+  <table><tr><th>Field</th><th>Detail</th></tr>
+  <tr><td>Contact</td><td>${esc(l.contact||'Not recorded')}</td></tr>
+  <tr><td>Products Discussed</td><td>${esc(l.tprod||'\u2014')}</td></tr>
+  <tr><td>Next Action Point</td><td>${esc(l.tact||'\u2014')}</td></tr>
+  ${l.prevAct?`<tr><td>Prev. Action</td><td>${esc(l.prevAct||'\u2014')} \u2014 ${esc(l.prevUpd||'\u2014')}</td></tr>`:''}
+  ${l.iif?`<tr><td>IIF Reference</td><td>${esc(l.iif)}</td></tr><tr><td>IIF Status</td><td>${esc(l.iifStat||'\u2014')}</td></tr>`:''}
+  </table>
+  ${l.notes?`<p class="lbl">What Was Discussed:</p><p class="note">${esc(l.notes)}</p>`:''}
+  ${l.comments?`<p class="lbl">Key Discussion &amp; Feedback:</p><p class="note">${esc(l.comments)}</p>`:''}
+  ${l.iifSum?`<p class="lbl">IIF Summary:</p><p class="note">${esc(l.iifSum)}</p>`:''}
+  ${l.projects?`<p class="lbl">Projects:</p><p class="note">${esc(l.projects)}</p>`:''}`;
+}
+function exportThisMonth(){
+  const now=new Date(),pfx=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const fl=logs.filter(l=>l.date&&l.date.startsWith(pfx));
+  let s=hdr("This Month's Visit Summary")+`<p><strong>Total visits: ${fl.length}</strong></p>`;
+  fl.forEach(l=>s+=logBlock(l));
+  dlDoc(s,`visit-summary-${pfx}.doc`);toast('\u2193 Monthly summary downloaded');
+}
+function exportAllActions(){
+  const over=actions.filter(a=>!a.done&&a.status==='overdue'),week=actions.filter(a=>!a.done&&a.status==='week');
+  let s=hdr('Action Points Report')+`<p><strong>Open: ${actions.filter(a=>!a.done).length} (${over.length} overdue)</strong></p>
+  <h2>Overdue Actions</h2><table><tr><th>Customer</th><th>Action</th><th>Due</th></tr>${over.map(a=>`<tr><td>${esc(a.cust)}</td><td>${esc(a.text)}</td><td style="color:#c0392b;font-weight:bold;">${a.due?fmtDate(a.due):'Overdue'}</td></tr>`).join('')}</table>
+  <h2>Due This Week</h2><table><tr><th>Customer</th><th>Action</th><th>Due</th></tr>${week.map(a=>`<tr><td>${esc(a.cust)}</td><td>${esc(a.text)}</td><td>${a.due?fmtDate(a.due):'This week'}</td></tr>`).join('')}</table>`;
+  dlDoc(s,'action-points-report.doc');toast('\u2193 Actions report downloaded');
+}
+function exportIIFReport(){
+  let s=hdr('IIF Pipeline Report')+`<p><strong>Total IIFs: ${iifs.length}</strong></p>`;
+  ICOLS.forEach(col=>{
+    const g=iifs.filter(i=>i.status===col);if(!g.length)return;
+    s+=`<h2>${col} (${g.length})</h2><table><tr><th>Customer</th><th>IIF Ref</th><th>Product</th><th>Days</th></tr>${g.map(i=>`<tr><td>${esc(i.cust)}</td><td>${esc(i.ref)}</td><td>${esc(i.prod)}</td><td>${i.days}</td></tr>`).join('')}</table>`;
+  });
+  dlDoc(s,'iif-pipeline-report.doc');toast('\u2193 IIF report downloaded');
+}
+function exportAllLogs(){
+  let s=hdr('Full Territory Report')+`<p><strong>Accounts: 25 | Logs: ${logs.length}</strong></p>
+  <h2>Account Visit Frequency</h2><table><tr><th>Customer</th><th>Group</th><th>Target</th><th>Last Visit</th><th>Status</th></tr>${getAllCustomers().map(c=>{const lv=visits.filter(v=>v.cust===c.name&&v.status==='complete').sort((a,b)=>b.date.localeCompare(a.date))[0];const ds=lv?daysSince(lv.date):-1;const st=ds<0?'Never':ds>c.freq?'Overdue':ds>(c.freq*.7)?'Due soon':'On track';return`<tr><td>${esc(c.name)}</td><td>${c.group}</td><td>${c.freq} days</td><td>${lv?fmtDate(lv.date):'Never'}</td><td>${st}</td></tr>`;}).join('')}</table>`;
+  logs.forEach(l=>s+=logBlock(l));
+  dlDoc(s,'full-territory-report.doc');toast('\u2193 Full territory report downloaded');
+}
+function onRptSpecificDate(){
+  const sd=document.getElementById('rpt-specific-date').value;
+  if(sd){
+    document.getElementById('rpt-from').value=sd;
+    document.getElementById('rpt-to').value=sd;
+  }
+}
+
+function exportReport(format){
+  const type=document.getElementById('rpt-type').value;
+  const custFilter=document.getElementById('rpt-cust').value;
+  const fromDate=document.getElementById('rpt-from').value;
+  const toDate=document.getElementById('rpt-to').value;
+  const specificDate=document.getElementById('rpt-specific-date').value;
+  const fmt=format||'word';
+
+  if(type==='actions'){exportAllActions(fmt);return;}
+  if(type==='iif'){exportIIFReport(fmt);return;}
+
+  // Build filtered logs
+  let filteredLogs=logs.filter(l=>{
+    if(custFilter&&l.cust!==custFilter) return false;
+    if(fromDate&&l.date<fromDate) return false;
+    if(toDate&&l.date>toDate) return false;
+    return true;
+  });
+
+  // Build header label
+  const custLabel=custFilter||'All Customers';
+  const dateLabel=specificDate?fmtDate(specificDate):(fromDate||toDate)?(fmtDate(fromDate||'')+(fromDate!==toDate?' \u2013 '+fmtDate(toDate||''):'')):'All Dates';
+  const titleLabel=type==='full'?'Full Territory Report':'Visit Logs Report';
+
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const repName=settings.repName||'Territory Account Manager';
+  const territory=settings.territory||'Territory';
+
+  let s=``;
+
+  if(type==='full'){
+    s+=`<h2>Account Visit Frequency</h2><table><tr><th>Customer</th><th>Group</th><th>Target</th><th>Last Visit</th><th>Status</th></tr>${getAllCustomers().filter(c=>!custFilter||c.name===custFilter).map(c=>{const lv=visits.filter(v=>v.cust===c.name&&v.status==='complete').sort((a,b)=>b.date.localeCompare(a.date))[0];const ds=lv?daysSince(lv.date):-1;const st=ds<0?'Never':ds>c.freq?'Overdue':ds>(c.freq*.7)?'Due soon':'On track';return`<tr><td>${esc(c.name)}</td><td>${c.group}</td><td>${c.freq} days</td><td>${lv?fmtDate(lv.date):'Never'}</td><td>${st}</td></tr>`;}).join('')}</table>`;
+  }
+
+  if(filteredLogs.length){
+    filteredLogs.sort((a,b)=>a.date.localeCompare(b.date)).forEach(l=>s+=logBlock(l));
+  } else {
+    s+=`<p style="color:#666;font-style:italic;margin-top:14pt;">No visit logs found for the selected filters.</p>`;
+  }
+
+  const custSlug=(custFilter||'all-customers').replace(/[\s\/]/g,'-');
+  const dateSlug=specificDate||((fromDate||'start')+'-to-'+(toDate||'end'));
+
+  if(fmt==='pdf'){
+    dlPDF(s,`visit-report-${custSlug}-${dateSlug}.pdf`);
+  } else {
+    dlDoc(s,`visit-report-${custSlug}-${dateSlug}.doc`);
+  }
+  toast('\u2193 Report downloaded');
+}
+
+function dlPDF(html,fname){
+  const fullHtml=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${fname}</title><style>
+    @page{margin:1.8cm;}
+    body{font-family:Arial,sans-serif;font-size:10pt;color:#333;line-height:1.5;}
+    h1{color:#1F4E79;font-size:17pt;text-align:center;border-bottom:2px solid #2E75B6;padding-bottom:8px;margin-bottom:4px;}
+    h2{color:#1F4E79;font-size:13pt;margin-top:18pt;border-bottom:1px solid #ddd;padding-bottom:4px;}
+    table{border-collapse:collapse;width:100%;margin:8pt 0;}
+    th{background:#1F4E79;color:white;padding:5pt 7pt;font-size:9pt;text-align:left;}
+    td{border:1px solid #ddd;padding:4pt 7pt;font-size:9pt;}
+    tr:nth-child(even) td{background:#f9f9f9;}
+    .meta{color:#666;font-size:9pt;text-align:center;margin-bottom:14pt;}
+    .pb{page-break-before:always;}
+    .note{color:#555;margin:5pt 0;font-size:9.5pt;}
+    .lbl{font-weight:bold;color:#444;margin-top:8pt;}
+  </style></head><body>${html}</body></html>`;
+  const w=window.open('','_blank');
+  if(!w){toast('Please allow popups to download PDF','#c0392b');return;}
+  w.document.write(fullHtml);
+  w.document.close();
+  w.onload=function(){w.focus();w.print();};
+}
+function exportSingleLog(i){
+  const l=logs[i];
+  dlDoc(hdr('Visit Report')+logBlock(l),`visit-${(l.cust||'customer').replace(/[\s\/]/g,'-')}-${l.date}.doc`);
+  toast('\u2193 Visit report downloaded');
+}
+function exportLogWord(){
+  const cust=document.getElementById('log-cust').value,date=document.getElementById('log-date').value||today();
+  const l={cust:cust||'Unknown',date,contact:document.getElementById('log-contact').value,tprod:document.getElementById('log-tprod').value,tact:document.getElementById('log-tact').value,comments:document.getElementById('log-comments').value,iif:document.getElementById('log-iif').value,iifStat:document.getElementById('log-iif-stat').value,iifSum:document.getElementById('log-iif-sum').value,prevAct:document.getElementById('lp-act').value,prevUpd:document.getElementById('lp-upd').value,projects:document.getElementById('log-projects').value,notes:document.getElementById('log-notes').value};
+  dlDoc(hdr('Visit Report')+logBlock(l),`visit-${l.cust.replace(/[\s\/]/g,'-')}-${date}.doc`);toast('\u2193 Visit report downloaded');
+}
+
+
+
+// ===== ICS IMPORT =====
+// ===== SETTINGS =====
+var settings=ls('hvm_settings',{repName:'',repEmail:'',territory:'',freqGPI:30,freqSmurfit:30,freqHuber:30,freqOther:45});
+var customCustomers=ls('hvm_custom_custs',[]);
+var hiddenBuiltins=ls('hvm_hidden_builtins',[]);
+var custOverrides=ls('hvm_cust_overrides',{});
+
+function getAllCustomers(){
+  return CUSTOMERS.filter(function(c){return hiddenBuiltins.indexOf(c.name)===-1;}).map(function(c){
+    var ov=custOverrides[c.name];return ov?Object.assign({},c,ov):c;
+  }).concat(customCustomers);
+}
+
+function loadSettings(){
+  var s=settings;
+  document.getElementById('set-rep-name').value=s.repName||'';
+  document.getElementById('set-rep-email').value=s.repEmail||'';
+  document.getElementById('set-rep-territory').value=s.territory||'';
+  document.getElementById('freq-GPI').value=s.freqGPI||30;
+  document.getElementById('freq-Smurfit').value=s.freqSmurfit||30;
+  document.getElementById('freq-Huber').value=s.freqHuber||30;
+  document.getElementById('freq-other').value=s.freqOther||45;
+  if(s.repName){
+    document.getElementById('rep-name-hdr').textContent=s.repName;
+  }
+}
+
+function saveSettings(){
+  settings.repName=document.getElementById('set-rep-name').value;
+  settings.repEmail=document.getElementById('set-rep-email').value;
+  settings.territory=document.getElementById('set-rep-territory').value;
+  settings.freqGPI=parseInt(document.getElementById('freq-GPI').value)||30;
+  settings.freqSmurfit=parseInt(document.getElementById('freq-Smurfit').value)||30;
+  settings.freqHuber=parseInt(document.getElementById('freq-Huber').value)||30;
+  settings.freqOther=parseInt(document.getElementById('freq-other').value)||45;
+  lss('hvm_settings',settings);
+  if(settings.repName) document.getElementById('rep-name-hdr').textContent=settings.repName;
+  // Apply freq overrides to CUSTOMERS array
+  CUSTOMERS.forEach(function(c){
+    if(c.group==='GPI') c.freq=settings.freqGPI;
+    else if(c.group==='Smurfit') c.freq=settings.freqSmurfit;
+    else if(c.group==='Huber') c.freq=settings.freqHuber;
+    else c.freq=settings.freqOther;
+  });
+}
+
+function renderSetCusts(){
+  var q=(document.getElementById('set-cust-search').value||'').toLowerCase();
+  var all=getAllCustomers();
+  var filtered=all.filter(function(c){return !q||c.name.toLowerCase().indexOf(q)!==-1;});
+  var html=filtered.map(function(c){
+    var col=custColor(c.name);
+    var isCustom=customCustomers.some(function(x){return x.name===c.name;});
+    return '<div class="vr" style="margin-bottom:6px;">'
+      +'<div class="vav" style="background:'+col[0]+';color:'+col[1]+';font-size:11px;">'+ini(c.name)+'</div>'
+      +'<div class="vi"><div class="vn">'+esc(c.name)+'</div><div class="vm">'+c.group+' &bull; Visit every '+c.freq+' days</div></div>'
+      +'<div style="display:flex;gap:6px;margin-left:auto;">'
+      +'<button class="btn bsm bgho" onclick="showEditCust(\''+c.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">&#9998; Edit</button>'
+      +'<button class="btn bsm bred" onclick="removeCust(\''+c.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">Remove</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  if(hiddenBuiltins.length){
+    html+='<div style="margin-top:12px;padding:10px 12px;background:var(--amber-light);border-radius:8px;font-size:12px;color:var(--amber);display:flex;align-items:center;justify-content:space-between;">'
+      +'<span>'+hiddenBuiltins.length+' built-in customer'+(hiddenBuiltins.length!==1?'s':'')+' hidden</span>'
+      +'<button class="btn bsm bgho" onclick="restoreBuiltins()">Restore all</button>'
+      +'</div>';
+  }
+  document.getElementById('set-cust-list').innerHTML=html||'<div style="color:var(--ink3);font-size:13px;padding:8px;">No customers found</div>';
+  document.getElementById('hdr-cust-ct').textContent=all.length;
+}
+
+function showAddCust(){
+  document.getElementById('modal-content').innerHTML='<h3>Add New Customer</h3>'
+    +'<div class="fg"><div class="fl">Company Name</div><input class="fi" type="text" id="nc-name" placeholder="e.g. Acme Packaging Ltd"/></div>'
+    +'<div class="g2" style="gap:10px;">'
+    +'<div class="fg"><div class="fl">Group</div><select class="fi" id="nc-group"><option value="other">Independent</option><option value="GPI">GPI</option><option value="Smurfit">Smurfit WestRock</option><option value="Huber">Huber</option></select></div>'
+    +'<div class="fg"><div class="fl">Visit Frequency (days)</div><input class="fi" type="number" id="nc-freq" value="45" min="1"/></div>'
+    +'</div>'
+    +'<div class="fg"><div class="fl">Contact Name</div><input class="fi" type="text" id="nc-contact" placeholder="Main contact (optional)"/></div>'
+    +'<div class="fg"><div class="fl">Contact Email</div><input class="fi" type="email" id="nc-email" placeholder="email@company.com (optional)"/></div>'
+    +'<div class="modal-btns"><button class="btn bpri" onclick="confirmAddCust()">Add Customer</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>';
+  document.getElementById('modal-bg').style.display='flex';
+}
+
+function confirmAddCust(){
+  var name=document.getElementById('nc-name').value.trim();
+  if(!name){toast('Please enter a company name','#c0392b');return;}
+  if(getAllCustomers().some(function(c){return c.name.toLowerCase()===name.toLowerCase();})){
+    toast('Customer already exists','#c0392b');return;
+  }
+  var c={name:name,group:document.getElementById('nc-group').value,freq:parseInt(document.getElementById('nc-freq').value)||45,contact:document.getElementById('nc-contact').value,email:document.getElementById('nc-email').value,custom:true};
+  customCustomers.push(c);
+  lss('hvm_custom_custs',customCustomers);
+  populateSel();renderSetCusts();closeModal();
+  toast('Customer added: '+name);
+}
+
+function showEditCust(name){
+  var all=getAllCustomers();
+  var c=all.find(function(x){return x.name===name;});
+  if(!c)return;
+  var isCustom=customCustomers.some(function(x){return x.name===name;});
+  document.getElementById('modal-content').innerHTML='<h3>Edit Customer</h3>'
+    +'<div class="fg"><div class="fl">Company Name</div><input class="fi" type="text" id="ec-name" value="'+esc(c.name)+'" '+(isCustom?'':'readonly style="opacity:.6;"')+'/>'+(isCustom?'':'<div style="font-size:11px;color:var(--ink3);margin-top:3px;">Name cannot be changed for built-in customers</div>')+'</div>'
+    +'<div class="g2" style="gap:10px;">'
+    +'<div class="fg"><div class="fl">Group</div><select class="fi" id="ec-group"><option value="other"'+(c.group==='other'?' selected':'')+'>Independent</option><option value="GPI"'+(c.group==='GPI'?' selected':'')+'>GPI</option><option value="Smurfit"'+(c.group==='Smurfit'?' selected':'')+'>Smurfit WestRock</option><option value="Huber"'+(c.group==='Huber'?' selected':'')+'>Huber</option></select></div>'
+    +'<div class="fg"><div class="fl">Visit Frequency (days)</div><input class="fi" type="number" id="ec-freq" value="'+(c.freq||45)+'" min="1"/></div>'
+    +'</div>'
+    +'<div class="fg"><div class="fl">Contact Name</div><input class="fi" type="text" id="ec-contact" value="'+esc(c.contact||'')+'" placeholder="Main contact (optional)"/></div>'
+    +'<div class="fg"><div class="fl">Contact Email</div><input class="fi" type="email" id="ec-email" value="'+esc(c.email||'')+'" placeholder="email@company.com (optional)"/></div>'
+    +'<input type="hidden" id="ec-orig-name" value="'+esc(name)+'">'
+    +'<input type="hidden" id="ec-is-custom" value="'+(isCustom?'1':'0')+'">'
+    +'<div class="modal-btns"><button class="btn bpri" onclick="confirmEditCust()">Save Changes</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>';
+  document.getElementById('modal-bg').style.display='flex';
+}
+
+function confirmEditCust(){
+  var origName=document.getElementById('ec-orig-name').value;
+  var isCustom=document.getElementById('ec-is-custom').value==='1';
+  var group=document.getElementById('ec-group').value;
+  var freq=parseInt(document.getElementById('ec-freq').value)||45;
+  var contact=document.getElementById('ec-contact').value.trim();
+  var email=document.getElementById('ec-email').value.trim();
+  if(isCustom){
+    var newName=document.getElementById('ec-name').value.trim();
+    if(!newName){toast('Please enter a company name','#c0392b');return;}
+    var idx=customCustomers.findIndex(function(c){return c.name===origName;});
+    if(idx!==-1){customCustomers[idx]=Object.assign(customCustomers[idx],{name:newName,group:group,freq:freq,contact:contact,email:email});}
+    lss('hvm_custom_custs',customCustomers);
+  } else {
+    custOverrides[origName]={group:group,freq:freq,contact:contact,email:email};
+    lss('hvm_cust_overrides',custOverrides);
+  }
+  populateSel();renderSetCusts();closeModal();toast('Customer updated');
+}
+
+function removeCust(name){
+  if(!confirm('Remove '+name+' from your customer list?\n\nYou can restore built-in customers later from Settings.')) return;
+  var isBuiltin=CUSTOMERS.some(function(c){return c.name===name;});
+  if(isBuiltin){
+    if(hiddenBuiltins.indexOf(name)===-1) hiddenBuiltins.push(name);
+    lss('hvm_hidden_builtins',hiddenBuiltins);
+  } else {
+    var idx=customCustomers.findIndex(function(c){return c.name===name;});
+    if(idx!==-1){customCustomers.splice(idx,1);lss('hvm_custom_custs',customCustomers);}
+  }
+  populateSel();renderSetCusts();toast('Customer removed');
+}
+
+function restoreBuiltins(){
+  hiddenBuiltins=[];
+  lss('hvm_hidden_builtins',hiddenBuiltins);
+  populateSel();renderSetCusts();toast('Built-in customers restored');
+}
+
+function updateStorageDisplay(){
+  try{
+    var keys=['hvm_v','hvm_l','hvm_a','hvm_i','hvm_settings','hvm_custom_custs'];
+    var total=0;
+    keys.forEach(function(k){var v=localStorage.getItem(k);if(v)total+=v.length;});
+    var kb=(total/1024).toFixed(1);
+    document.getElementById('storage-used').textContent=kb+' KB (of ~5 MB browser limit)';
+  }catch(e){document.getElementById('storage-used').textContent='Unknown';}
+}
+
+function exportBackup(){
+  var data={visits:visits,logs:logs,actions:actions,iifs:iifs,settings:settings,customCustomers:customCustomers,hiddenBuiltins:hiddenBuiltins,exported:new Date().toISOString()};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='huber-visit-manager-backup-'+today()+'.json';
+  a.click();URL.revokeObjectURL(a.href);
+  toast('Backup downloaded');
+}
+
+function importBackup(file){
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!confirm('This will replace ALL your current data with the backup. Are you sure?')) return;
+      if(data.visits) visits=data.visits;
+      if(data.logs) logs=data.logs;
+      if(data.actions) actions=data.actions;
+      if(data.iifs) iifs=data.iifs;
+      if(data.settings) settings=data.settings;
+      if(data.customCustomers) customCustomers.push.apply(customCustomers,data.customCustomers);
+      if(data.hiddenBuiltins) hiddenBuiltins=data.hiddenBuiltins;
+      save();lss('hvm_settings',settings);lss('hvm_custom_custs',customCustomers);lss('hvm_hidden_builtins',hiddenBuiltins);
+      populateSel();renderDash();renderSetCusts();loadSettings();updateStorageDisplay();renderSavedLogs();
+      toast('Backup restored successfully');
+    }catch(ex){toast('Invalid backup file','#c0392b');}
+  };
+  reader.readAsText(file);
+}
+
+function clearAllData(){
+  if(!confirm('This will permanently delete ALL visits, logs, actions, IIFs and settings. This cannot be undone.\n\nAre you absolutely sure?')) return;
+  visits=[];logs=[];actions=[];iifs=[];hiddenBuiltins=[];
+  settings={repName:'',repEmail:'',territory:'',freqGPI:30,freqSmurfit:30,freqHuber:30,freqOther:45};
+  save();lss('hvm_settings',settings);lss('hvm_hidden_builtins',hiddenBuiltins);
+  renderDash();renderSavedLogs();renderSetCusts();loadSettings();updateStorageDisplay();
+  toast('All data cleared');
+}
+
+
+// ===== ADMIN DAY =====
+var adminDays = ls('hvm_admin', []);
+
+// Temp state for current form
+var admAchieved = [];
+var admTodos = [];
+
+function initAdminForm(){
+  var today_str = today();
+  document.getElementById('adm-date').value = today_str;
+  // Check for open todos from last session and show carry-forward
+  var lastDay = adminDays.length ? adminDays[0] : null;
+  var cfCard = document.getElementById('carry-forward-card');
+  var cfList = document.getElementById('carry-forward-list');
+  if(lastDay){
+    var openTodos = (lastDay.todos||[]).filter(function(t){return !t.done;});
+    if(openTodos.length){
+      cfCard.style.display='block';
+      cfList.innerHTML = openTodos.map(function(t,i){
+        return '<div class="ar" style="margin-bottom:6px;">'
+          + '<div class="artag" style="background:var(--orange-light);color:var(--orange);">Carry?</div>'
+          + '<input value="'+esc(t.text)+'" readonly style="flex:1;"/>'
+          + (t.due?'<span class="ardue" style="color:var(--amber);">'+fmtDate(t.due)+'</span>':'')
+          + '<button class="btn bsm bora" onclick="carryOneForward('+i+')">Add</button>'
+          + '</div>';
+      }).join('');
+    } else { cfCard.style.display='none'; }
+  } else { cfCard.style.display='none'; }
+  renderAdminFormLists();
+  updateAdminStats();
+  renderAllOpenTodos();
+}
+
+function renderAdminFormLists(){
+  // Achieved list
+  var al = document.getElementById('achieved-list');
+  al.innerHTML = admAchieved.map(function(item,i){
+    return '<div class="ar" style="margin-bottom:6px;">'
+      + '<span style="color:var(--green);font-size:16px;flex-shrink:0;">&#10003;</span>'
+      + '<input value="'+esc(item)+'" onchange="admAchieved['+i+']=this.value" style="flex:1;background:var(--green-light);border-color:rgba(26,122,58,.2);"/>'
+      + '<button class="btn bsm bred" onclick="removeAchieved('+i+')">&#10005;</button>'
+      + '</div>';
+  }).join('') || '<div style="font-size:12px;color:var(--ink3);padding:6px 0;">Nothing added yet — type above and press Enter or click Add</div>';
+
+  // Todo list
+  var tl = document.getElementById('todo-list');
+  tl.innerHTML = admTodos.map(function(item,i){
+    return '<div class="ar" style="margin-bottom:6px;">'
+      + '<span style="color:var(--orange);font-size:14px;flex-shrink:0;">&#9632;</span>'
+      + '<input value="'+esc(item.text)+'" onchange="admTodos['+i+'].text=this.value" style="flex:1;background:var(--orange-light);border-color:rgba(217,79,0,.2);"/>'
+      + (item.due ? '<span class="ardue" style="color:var(--amber);white-space:nowrap;">'+fmtDate(item.due)+'</span>' : '')
+      + '<button class="btn bsm bred" onclick="removeTodo('+i+')">&#10005;</button>'
+      + '</div>';
+  }).join('') || '<div style="font-size:12px;color:var(--ink3);padding:6px 0;">No jobs added yet</div>';
+}
+
+function addAchieved(){
+  var inp = document.getElementById('adm-achieved-input');
+  var val = inp.value.trim();
+  if(!val) return;
+  admAchieved.push(val);
+  inp.value='';
+  renderAdminFormLists();
+}
+
+function removeAchieved(i){ admAchieved.splice(i,1); renderAdminFormLists(); }
+
+function addTodo(){
+  var inp = document.getElementById('adm-todo-input');
+  var due = document.getElementById('adm-todo-due').value;
+  var val = inp.value.trim();
+  if(!val) return;
+  admTodos.push({text:val, due:due||'', done:false});
+  inp.value=''; document.getElementById('adm-todo-due').value='';
+  renderAdminFormLists();
+}
+
+function removeTodo(i){ admTodos.splice(i,1); renderAdminFormLists(); }
+
+function carryOneForward(i){
+  var lastDay = adminDays[0];
+  if(!lastDay) return;
+  var openTodos = (lastDay.todos||[]).filter(function(t){return !t.done;});
+  var t = openTodos[i];
+  if(!t) return;
+  admTodos.push({text:t.text, due:t.due||'', done:false, carriedForward:true});
+  renderAdminFormLists();
+  toast('Added to today\'s list');
+}
+
+function carryAllForward(){
+  var lastDay = adminDays[0];
+  if(!lastDay) return;
+  var openTodos = (lastDay.todos||[]).filter(function(t){return !t.done;});
+  openTodos.forEach(function(t){
+    admTodos.push({text:t.text, due:t.due||'', done:false, carriedForward:true});
+  });
+  renderAdminFormLists();
+  toast('All carried forward to today');
+}
+
+function saveAdminDay(){
+  if(!admAchieved.length && !admTodos.length){
+    toast('Please add at least one item before saving','#c0392b');
+    return;
+  }
+  var date = document.getElementById('adm-date').value || today();
+  var notes = document.getElementById('adm-notes').value;
+  var rec = {
+    id: Date.now(),
+    date: date,
+    achieved: admAchieved.slice(),
+    todos: admTodos.map(function(t){ return {text:t.text, due:t.due, done:false, carriedForward:t.carriedForward||false}; }),
+    notes: notes
+  };
+  adminDays.unshift(rec);
+  lss('hvm_admin', adminDays);
+  admAchieved = [];
+  admTodos = [];
+  document.getElementById('adm-notes').value='';
+  renderAdminFormLists();
+  renderAdminHistory();
+  updateAdminStats();
+  renderAllOpenTodos();
+  initAdminForm();
+  toast('\u2713 Admin day saved!');
+}
+
+function clearAdminForm(){
+  admAchieved=[];
+  admTodos=[];
+  document.getElementById('adm-notes').value='';
+  document.getElementById('adm-achieved-input').value='';
+  document.getElementById('adm-todo-input').value='';
+  document.getElementById('adm-todo-due').value='';
+  renderAdminFormLists();
+}
+
+function toggleTodoDone(dayId, todoIdx){
+  var day = adminDays.find(function(d){return d.id===dayId;});
+  if(!day||!day.todos[todoIdx]) return;
+  day.todos[todoIdx].done = !day.todos[todoIdx].done;
+  lss('hvm_admin', adminDays);
+  renderAdminHistory();
+  updateAdminStats();
+  renderAllOpenTodos();
+}
+
+function renderAdminHistory(){
+  initAdminForm();
+  var hist = document.getElementById('admin-history');
+  var ct = document.getElementById('adm-hist-ct');
+  ct.textContent = adminDays.length + ' session' + (adminDays.length!==1?'s':'');
+  if(!adminDays.length){
+    hist.innerHTML='<div style="color:var(--ink3);font-size:13px;padding:10px 0;">No admin days logged yet. Fill in the form above to get started.</div>';
+    return;
+  }
+  hist.innerHTML = adminDays.map(function(day){
+    var doneCt = (day.todos||[]).filter(function(t){return t.done;}).length;
+    var totalTodos = (day.todos||[]).length;
+    var openCt = totalTodos - doneCt;
+    return '<div style="background:var(--surface);border-radius:var(--r);border:.5px solid var(--border);overflow:hidden;margin-bottom:14px;">'
+      // Header
+      + '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface2);border-bottom:.5px solid var(--border);">'
+      + '<div style="display:flex;align-items:center;gap:10px;">'
+      + '<div style="width:34px;height:34px;border-radius:8px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;">&#9998;</div>'
+      + '<div><div style="font-weight:700;font-size:13px;">Admin Day &mdash; '+fmtDate(day.date)+'</div>'
+      + '<div style="font-size:11px;color:var(--ink3);">'+(day.achieved||[]).length+' achieved &bull; '+totalTodos+' jobs ('+(openCt>0?'<span style="color:var(--orange);font-weight:600;">'+openCt+' open</span>':'<span style="color:var(--green);font-weight:600;">all done</span>')+')</div>'
+      + '</div></div>'
+      + '<div style="display:flex;gap:7px;">'
+      + '<button class="btn bsm bgho" onclick="exportAdminDayWord('+day.id+')">&#8595; Word</button>'
+      + '<button class="btn bsm bred" onclick="deleteAdminDay('+day.id+')">Delete</button>'
+      + '</div>'
+      + '</div>'
+      // Body
+      + '<div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+      // Achieved
+      + '<div><div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">&#10003; Achieved</div>'
+      + (day.achieved||[]).map(function(a){
+          return '<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;">'
+            + '<span style="color:var(--green);flex-shrink:0;margin-top:1px;">&#10003;</span>'
+            + '<span>'+esc(a)+'</span></div>';
+        }).join('')
+      + (!(day.achieved||[]).length?'<div style="font-size:12px;color:var(--ink3);">Nothing recorded</div>':'')
+      + '</div>'
+      // Todos
+      + '<div><div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">&#9632; Jobs / To Do</div>'
+      + (day.todos||[]).map(function(t,ti){
+          var overdue = t.due && t.due < today() && !t.done;
+          return '<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:6px;font-size:12px;'+(t.done?'opacity:.5;':'')+'">'
+            + '<input type="checkbox" '+(t.done?'checked':'')+' style="accent-color:var(--green);margin-top:2px;flex-shrink:0;" onclick="toggleTodoDone('+day.id+','+ti+')" />'
+            + '<div style="flex:1;'+(t.done?'text-decoration:line-through;':'')+'">'
+            + esc(t.text)
+            + (t.due?'<span style="display:block;font-size:10px;color:'+(overdue?'var(--red)':'var(--ink3)')+';">'+(overdue?'Overdue: ':'')+fmtDate(t.due)+'</span>':'')
+            + (t.carriedForward?'<span style="font-size:10px;color:var(--amber);">Carried forward</span>':'')
+            + '</div>'
+            + '</div>';
+        }).join('')
+      + (!(day.todos||[]).length?'<div style="font-size:12px;color:var(--ink3);">No jobs listed</div>':'')
+      + '</div>'
+      + '</div>'
+      + (day.notes?'<div style="padding:10px 16px;border-top:.5px solid var(--border);font-size:12px;color:var(--ink2);"><span style="font-weight:700;color:var(--ink3);">Notes: </span>'+esc(day.notes)+'</div>':'')
+      + '</div>';
+  }).join('');
+}
+
+function renderAllOpenTodos(){
+  var allOpen = [];
+  adminDays.forEach(function(day){
+    (day.todos||[]).forEach(function(t,ti){
+      if(!t.done) allOpen.push({text:t.text, due:t.due, date:day.date, dayId:day.id, idx:ti});
+    });
+  });
+  document.getElementById('open-todos-ct').textContent = allOpen.length;
+  var el = document.getElementById('all-open-todos');
+  if(!allOpen.length){
+    el.innerHTML='<div style="color:var(--ink3);font-size:13px;padding:8px 0;">No open to dos &mdash; all caught up!</div>';
+    return;
+  }
+  allOpen.sort(function(a,b){
+    if(!a.due&&!b.due) return 0;
+    if(!a.due) return 1;
+    if(!b.due) return -1;
+    return a.due.localeCompare(b.due);
+  });
+  el.innerHTML = allOpen.map(function(t){
+    var overdue = t.due && t.due < today();
+    return '<div class="ar" style="margin-bottom:6px;">'
+      + '<div class="artag" style="font-size:10px;background:var(--surface2);">'+fmtDate(t.date)+'</div>'
+      + '<input value="'+esc(t.text)+'" readonly style="flex:1;"/>'
+      + (t.due?'<span class="ardue" style="color:'+(overdue?'var(--red)':'var(--amber)')+';">'+(overdue?'Overdue':fmtDate(t.due))+'</span>':'')
+      + '<button class="btn bsm bsuc" onclick="toggleTodoDone('+t.dayId+','+t.idx+')" title="Mark done">&#10003;</button>'
+      + '</div>';
+  }).join('');
+}
+
+function updateAdminStats(){
+  var totalDone=0, totalOpen=0, totalOverdue=0;
+  adminDays.forEach(function(d){
+    (d.todos||[]).forEach(function(t){
+      if(t.done) totalDone++;
+      else {
+        totalOpen++;
+        if(t.due&&t.due<today()) totalOverdue++;
+      }
+    });
+  });
+  document.getElementById('adm-total-days').textContent=adminDays.length;
+  document.getElementById('adm-done-ct').textContent=totalDone;
+  document.getElementById('adm-open-ct').textContent=totalOpen;
+  document.getElementById('adm-overdue-ct').textContent=totalOverdue;
+  // Also refresh dash stat card if it exists
+  var dso=document.getElementById('s-adm-open');
+  var dsa=document.getElementById('s-adm-over');
+  if(dso) dso.textContent=totalOpen;
+  if(dsa) dsa.textContent=totalOverdue+' overdue';
+}
+
+function deleteAdminDay(id){
+  if(!confirm('Delete this admin day log? This cannot be undone.')) return;
+  adminDays = adminDays.filter(function(d){return d.id!==id;});
+  lss('hvm_admin',adminDays);
+  renderAdminHistory();
+  updateAdminStats();
+  renderAllOpenTodos();
+  toast('Admin day deleted');
+}
+
+function exportAdminWord(){
+  var date = document.getElementById('adm-date').value || today();
+  var notes = document.getElementById('adm-notes').value;
+  var rec = {date:date, achieved:admAchieved, todos:admTodos, notes:notes};
+  dlDoc(buildAdminWordContent([rec]), 'admin-day-'+date+'.doc');
+  toast('\u2193 Admin day exported to Word');
+}
+
+function exportAdminDayWord(id){
+  var day = adminDays.find(function(d){return d.id===id;});
+  if(!day) return;
+  dlDoc(buildAdminWordContent([day]), 'admin-day-'+day.date+'.doc');
+  toast('\u2193 Admin day exported to Word');
+}
+
+function buildAdminWordContent(days){
+  var now = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  var html = '<h1>Huber Visit Manager</h1><h2>Admin Day Report</h2><p class="meta">Generated: '+now+'</p>';
+  days.forEach(function(day){
+    html += '<h2>Admin Day &mdash; '+fmtDate(day.date)+'</h2>';
+    if(day.achieved&&day.achieved.length){
+      html += '<p class="lbl">What I Achieved:</p>';
+      html += '<table><tr><th>#</th><th>Achievement</th></tr>';
+      day.achieved.forEach(function(a,i){ html+='<tr><td>'+(i+1)+'</td><td>'+esc(a)+'</td></tr>'; });
+      html += '</table>';
+    }
+    if(day.todos&&day.todos.length){
+      html += '<p class="lbl">Jobs / To Do:</p>';
+      html += '<table><tr><th>Status</th><th>Task</th><th>Due Date</th></tr>';
+      day.todos.forEach(function(t){
+        var status = t.done ? 'Done' : (t.due&&t.due<today()?'Overdue':'Open');
+        html += '<tr><td style="color:'+(t.done?'green':t.due&&t.due<today()?'red':'inherit')+';">'+status+'</td><td>'+esc(t.text)+'</td><td>'+(t.due?fmtDate(t.due):'-')+'</td></tr>';
+      });
+      html += '</table>';
+    }
+    if(day.notes){ html += '<p class="lbl">Notes:</p><p class="note">'+esc(day.notes)+'</p>'; }
+  });
+  return html;
+}
+
+// ===== FEATURE 1: QUICK LOG (from scheduled visit) =====
+function quickLog(vid){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  if(!v) return;
+  tab('log');
+  setTimeout(()=>{
+    document.getElementById('log-cust').value=v.cust;
+    document.getElementById('log-date').value=v.date||today();
+    document.getElementById('log-contact').value=v.contact||'';
+    // Show banner
+    const banner=document.getElementById('quick-log-banner');
+    banner.style.display='flex';
+    document.getElementById('qlb-title').textContent='Logging visit to '+v.cust;
+    document.getElementById('qlb-sub').textContent=fmtDate(v.date)+(v.purpose?' \u00b7 '+v.purpose:'');
+    // Pre-fill products if visit had them
+    if(v.prods){
+      document.getElementById('log-tprod').value=v.prods;
+      document.getElementById('adv-log-badge').style.display='inline-block';
+    }
+    // Show pre-visit objectives banner if notes exist
+    const objBanner=document.getElementById('log-objectives-banner');
+    const objContent=document.getElementById('log-objectives-content');
+    if(v.notes&&objBanner&&objContent){
+      objContent.innerHTML=esc(v.notes).replace(/\n/g,'<br>');
+      objBanner.style.display='block';
+      objBanner.dataset.visitId=v.id;
+    } else if(objBanner){
+      objBanner.style.display='none';
+    }
+    // Trigger customer-specific loading
+    onLogCust(v.id);
+  },50);
+}
+
+// ===== FEATURE 2: onLogCust — show history + open actions when customer selected =====
+function onLogCust(linkedVisitId){
+  const cust=document.getElementById('log-cust').value;
+  if(!cust) return;
+  // Show open actions
+  const openA=actions.filter(a=>a.cust===cust&&!a.done);
+  const paEl=document.getElementById('log-prev-actions');
+  const paList=document.getElementById('log-prev-actions-list');
+  if(openA.length){
+    paEl.style.display='block';
+    paList.innerHTML=openA.map(a=>`<div class="ar" style="margin-bottom:5px;"><input value="${esc(a.text)}" readonly style="flex:1;"/><span style="font-size:11px;font-weight:700;color:${a.status==='overdue'?'var(--red)':'var(--amber)'};">${a.status==='overdue'?'Overdue':'This week'}</span><button class="btn bsm bsuc" style="padding:3px 8px;font-size:10px;" onclick="doneAction(${a.id});onLogCust()">&#10003;</button></div>`).join('');
+  } else paEl.style.display='none';
+  // Show last visit summary
+  const lastLog=logs.filter(l=>l.cust===cust)[0];
+  const histEl=document.getElementById('log-cust-history');
+  const histBody=document.getElementById('log-cust-history-content');
+  if(lastLog){
+    histEl.style.display='block';
+    histBody.innerHTML=`<div style="font-size:11px;color:var(--ink3);margin-bottom:8px;">${fmtDate(lastLog.date)}${lastLog.contact?' \u00b7 '+esc(lastLog.contact):''}</div>`
+      +(lastLog.tprod?`<div style="font-size:12px;margin-bottom:5px;"><span style="color:var(--teal);font-weight:700;">Products: </span>${esc(lastLog.tprod)}</div>`:'')
+      +(lastLog.tact?`<div style="font-size:12px;margin-bottom:5px;"><span style="color:var(--blue);font-weight:700;">Action was: </span>${esc(lastLog.tact)}</div>`:'')
+      +(lastLog.comments?`<div style="font-size:12px;color:var(--ink2);border-top:.5px solid var(--border);padding-top:8px;margin-top:8px;">${esc(lastLog.comments)}</div>`:'');
+  } else histEl.style.display='none';
+}
+
+// ===== FEATURE 3: ADVANCED LOG TOGGLE =====
+function toggleAdvancedLog(){
+  const el=document.getElementById('adv-log-fields');
+  el.style.display=el.style.display==='none'||!el.style.display?'block':'none';
+}
+
+// ===== FEATURE 4: QUICK LOG MODAL (unscheduled, 30-second entry) =====
+function showQuickLogModal(){
+  const custOpts=getAllCustomers().map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  document.getElementById('modal-content').innerHTML=`
+    <h3>&#9889; Quick Log — Unscheduled Visit</h3>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Log a visit you didn't pre-schedule. Just the essentials.</div>
+    <div class="fg"><div class="fl">Customer</div><select class="fi" id="ql-cust"><option value="">Select...</option>${custOpts}</select></div>
+    <div class="g2" style="gap:10px;">
+      <div class="fg"><div class="fl">Date</div><input class="fi" type="date" id="ql-date" value="${today()}"/></div>
+      <div class="fg"><div class="fl">Contact Met</div><input class="fi" type="text" id="ql-contact" placeholder="Name / role"/></div>
+    </div>
+    <div class="fg"><div class="fl">What Was Discussed</div><textarea class="fi" id="ql-comments" style="min-height:75px;" placeholder="Products, customer feedback, key points..."></textarea></div>
+    <div class="fg"><div class="fl">Next Action</div><input class="fi" type="text" id="ql-action" placeholder="What happens next?"/></div>
+    <div class="modal-btns">
+      <button class="btn bpri" onclick="confirmQuickLog()">&#10003; Save Log</button>
+      <button class="btn bgho" onclick="closeModal()">Cancel</button>
+    </div>`;
+  document.getElementById('modal-bg').style.display='flex';
+}
+
+function confirmQuickLog(){
+  const cust=document.getElementById('ql-cust').value;
+  if(!cust){toast('Please select a customer','#c0392b');return;}
+  const l={id:Date.now(),cust,date:document.getElementById('ql-date').value||today(),contact:document.getElementById('ql-contact').value,tprod:'',tact:document.getElementById('ql-action').value,comments:document.getElementById('ql-comments').value,prevProd:'',prevAct:'',prevUpd:'',iif:'',iifProd:'',iifStat:'',iifClose:'',iifSum:'',projects:'',notes:'',quickEntry:true};
+  logs.unshift(l);
+  // Auto-create action if filled
+  if(l.tact) actions.unshift({id:Date.now(),cust,text:l.tact,due:'',status:'week',done:false});
+  save();renderSavedLogs();closeModal();renderDash();
+  toast('\u2713 Quick log saved for '+cust);
+}
+
+// ===== FEATURE 5: CUSTOMER HISTORY PANEL =====
+function showCustHistory(name){
+  const panel=document.getElementById('cust-history-panel');
+  const body=document.getElementById('chp-body');
+  const col=custColor(name);
+  panel.style.display='block';
+  document.getElementById('chp-title').innerHTML=`<span style="background:${col[0]};color:${col[1]};padding:3px 8px;border-radius:6px;margin-right:8px;">${ini(name)}</span>${esc(name)}`;
+  const custLogs=logs.filter(l=>l.cust===name).slice(0,10);
+  const custActions=actions.filter(a=>a.cust===name);
+  const custIIFs=iifs.filter(i=>i.cust===name);
+  const openA=custActions.filter(a=>!a.done);
+  let html='';
+  // Quick stats row
+  html+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+    <div style="background:var(--blue-light);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--blue);">${custLogs.length}</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Visits Logged</div></div>
+    <div style="background:${openA.length?'var(--orange-light)':'var(--green-light)'};border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:${openA.length?'var(--orange)':'var(--green)'};">${openA.length}</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Open Actions</div></div>
+    <div style="background:var(--teal-light);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--teal);">${custIIFs.length}</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">IIFs</div></div>
+  </div>`;
+  // Action buttons
+  html+=`<div style="display:flex;gap:7px;margin-bottom:14px;">
+    <button class="btn bsm bpri" style="flex:1;" onclick="quickSch('${name.replace(/'/g,"\\'")}')">+ Schedule Visit</button>
+    <button class="btn bsm bsuc" onclick="tab('log');setTimeout(()=>{document.getElementById('log-cust').value='${name.replace(/'/g,"\\'")}';onLogCust();},50);closeCustHistory();">&#9998; Log Visit</button>
+  </div>`;
+  // Open actions
+  if(openA.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Open Actions</div>`;
+    html+=openA.map(a=>`<div class="ar" style="margin-bottom:5px;"><input value="${esc(a.text)}" readonly style="flex:1;font-size:11px;"/><span style="font-size:10px;color:${a.status==='overdue'?'var(--red)':'var(--amber)'};">${a.status==='overdue'?'Overdue':'This week'}</span></div>`).join('');
+  }
+  // Visit timeline
+  if(custLogs.length){
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 8px;">Recent Visits</div>`;
+    html+=custLogs.map(l=>`<div style="padding:9px 12px;background:var(--surface2);border-radius:8px;border:.5px solid var(--border);margin-bottom:6px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:700;">${fmtDate(l.date)}</span><span style="font-size:11px;color:var(--ink3);">${esc(l.contact||'')}</span></div>
+      ${l.tprod?`<div style="font-size:11px;color:var(--teal);margin-bottom:2px;">&#9679; ${esc(l.tprod)}</div>`:''}
+      ${l.tact?`<div style="font-size:11px;color:var(--blue);margin-bottom:2px;">&#8594; ${esc(l.tact)}</div>`:''}
+      ${l.comments?`<div style="font-size:11px;color:var(--ink2);">${esc(l.comments.slice(0,100))}${l.comments.length>100?'...':''}</div>`:''}
+    </div>`).join('');
+  } else {
+    html+='<div style="font-size:13px;color:var(--ink3);padding:12px 0;">No visits logged yet for this customer.</div>';
+  }
+  body.innerHTML=html;
+}
+
+function closeCustHistory(){
+  document.getElementById('cust-history-panel').style.display='none';
+}
+
+// ===== FEATURE 6: POST-VISIT EMAIL DRAFT =====
+function draftFollowUpEmail(logIdx){
+  const l=logs[logIdx];if(!l)return;
+  const cust=getAllCustomers().find(c=>c.name===l.cust);
+  const repName=settings.repName||'[Your Name]';
+  const repEmail=settings.repEmail||'';
+  const subject=`Follow-up: Visit to ${l.cust} — ${fmtDate(l.date)}`;
+  let body=`Dear ${l.contact||'[Contact Name]'},\n\nThank you for your time today`;
+  if(l.date) body+=` (${fmtDate(l.date)})`;
+  body+=`. It was great catching up and I wanted to follow up on the key points from our discussion.\n\n`;
+  if(l.tprod) body+=`Products discussed: ${l.tprod}\n\n`;
+  if(l.comments) body+=`Discussion summary:\n${l.comments}\n\n`;
+  if(l.tact) body+=`Agreed action point:\n\u2022 ${l.tact}\n\n`;
+  if(l.iif&&l.iifStat) body+=`IIF reference ${l.iif} is currently: ${l.iifStat}\n\n`;
+  body+=`Please don't hesitate to get in touch if you have any questions.\n\nBest regards,\n${repName}`;
+  if(repEmail) body+=`\n${repEmail}`;
+  const mailto=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('modal-content').innerHTML=`
+    <h3>&#9993; Draft Follow-Up Email</h3>
+    <div style="font-size:12px;color:var(--ink3);margin-bottom:12px;">Review and edit before sending. Click Open in Mail to launch your email client.</div>
+    <div class="fg"><div class="fl">Subject</div><input class="fi" type="text" id="em-sub" value="${esc(subject)}"/></div>
+    <div class="fg"><div class="fl">Body</div><textarea class="fi" id="em-body" style="min-height:200px;font-size:12px;line-height:1.6;">${esc(body)}</textarea></div>
+    <div class="modal-btns">
+      <button class="btn bpri" onclick="openMail()">&#9993; Open in Mail</button>
+      <button class="btn bgho" onclick="closeModal()">Close</button>
+    </div>`;
+  document.getElementById('modal-bg').style.display='flex';
+  document.getElementById('modal-content')._mailto=mailto;
+}
+
+function openMail(){
+  const sub=document.getElementById('em-sub').value;
+  const body=document.getElementById('em-body').value;
+  window.location.href=`mailto:?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
+}
+
+// ===== AI SUMMARY PACK =====
+function populateAIYearSelect(){
+  const sel=document.getElementById('ai-year');
+  if(!sel) return;
+  const currentYear=new Date().getFullYear();
+  const years=new Set([currentYear,currentYear-1]);
+  logs.forEach(l=>{if(l.date)years.add(parseInt(l.date.slice(0,4)));});
+  adminDays.forEach(d=>{if(d.date)years.add(parseInt(d.date.slice(0,4)));});
+  const sorted=[...years].filter(y=>!isNaN(y)).sort((a,b)=>b-a);
+  sel.innerHTML=sorted.map(y=>`<option value="${y}"${y===currentYear?' selected':''}>${y}</option>`).join('');
+}
+
+function exportAIPack(){
+  const sel=document.getElementById('ai-year');
+  const year=sel?parseInt(sel.value):new Date().getFullYear();
+  const pfx=String(year);
+  const repName=settings.repName||'Territory Account Manager';
+  const territory=settings.territory||'Territory';
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+
+  const yearLogs=logs.filter(l=>l.date&&l.date.startsWith(pfx)).sort((a,b)=>a.date.localeCompare(b.date));
+  const yearAdminDays=adminDays.filter(d=>d.date&&d.date.startsWith(pfx)).sort((a,b)=>a.date.localeCompare(b.date));
+  const yearIIFs=iifs;
+  const completedActions=actions.filter(a=>a.done);
+  const openActions=actions.filter(a=>!a.done);
+
+  let txt='';
+  txt+='================================================================\n';
+  txt+=`HUBER VISIT MANAGER — AI SUMMARY PACK\n`;
+  txt+=`Representative: ${repName}\n`;
+  txt+=`Territory: ${territory}\n`;
+  txt+=`Year: ${year}\n`;
+  txt+=`Generated: ${now}\n`;
+  txt+='================================================================\n\n';
+
+  // ── OVERVIEW ──
+  txt+='OVERVIEW\n';
+  txt+='--------\n';
+  txt+=`Total customer visits logged: ${yearLogs.length}\n`;
+  txt+=`Unique customers visited: ${[...new Set(yearLogs.map(l=>l.cust))].size}\n`;
+  txt+=`Admin days recorded: ${yearAdminDays.length}\n`;
+  txt+=`IIFs in pipeline: ${yearIIFs.length} (${yearIIFs.filter(i=>i.status==='Completed').length} completed)\n`;
+  txt+=`Action points completed: ${completedActions.length}\n`;
+  txt+=`Action points still open: ${openActions.length}\n\n`;
+
+  // ── VISIT LOGS ──
+  txt+='================================================================\n';
+  txt+='CUSTOMER VISIT LOGS\n';
+  txt+='================================================================\n\n';
+  if(yearLogs.length){
+    yearLogs.forEach(l=>{
+      txt+=`DATE: ${l.date}\n`;
+      txt+=`CUSTOMER: ${l.cust}\n`;
+      if(l.contact) txt+=`CONTACT: ${l.contact}\n`;
+      if(l.notes) txt+=`WHAT WAS DISCUSSED:\n${l.notes}\n`;
+      if(l.tprod) txt+=`PRODUCTS / INKS DISCUSSED: ${l.tprod}\n`;
+      if(l.comments) txt+=`KEY DISCUSSION & FEEDBACK:\n${l.comments}\n`;
+      if(l.tact) txt+=`NEXT ACTION POINT: ${l.tact}\n`;
+      if(l.iif) txt+=`IIF REFERENCE: ${l.iif} | STATUS: ${l.iifStat||'—'}\n`;
+      if(l.iifSum) txt+=`IIF SUMMARY: ${l.iifSum}\n`;
+      if(l.projects) txt+=`PROJECTS: ${l.projects}\n`;
+      txt+='\n---\n\n';
+    });
+  } else {
+    txt+=`No visit logs recorded for ${year}.\n\n`;
+  }
+
+  // ── ADMIN DAYS ──
+  txt+='================================================================\n';
+  txt+='ADMIN DAYS\n';
+  txt+='================================================================\n\n';
+  if(yearAdminDays.length){
+    yearAdminDays.forEach(d=>{
+      txt+=`DATE: ${d.date}\n`;
+      if(d.achieved&&d.achieved.length){
+        txt+='WHAT I ACHIEVED:\n';
+        d.achieved.forEach((a,i)=>txt+=`  ${i+1}. ${a}\n`);
+      }
+      if(d.todos&&d.todos.length){
+        const done=d.todos.filter(t=>t.done);
+        const open=d.todos.filter(t=>!t.done);
+        if(done.length){
+          txt+='COMPLETED TASKS:\n';
+          done.forEach(t=>txt+=`  ✓ ${t.text}${t.due?' (due '+t.due+')':''}\n`);
+        }
+        if(open.length){
+          txt+='OPEN / CARRY-FORWARD TASKS:\n';
+          open.forEach(t=>txt+=`  • ${t.text}${t.due?' (due '+t.due+')':''}${t.carriedForward?' [carried forward]':''}\n`);
+        }
+      }
+      if(d.notes) txt+=`NOTES: ${d.notes}\n`;
+      txt+='\n---\n\n';
+    });
+  } else {
+    txt+=`No admin days recorded for ${year}.\n\n`;
+  }
+
+  // ── IIF PIPELINE ──
+  txt+='================================================================\n';
+  txt+='IIF PIPELINE\n';
+  txt+='================================================================\n\n';
+  if(yearIIFs.length){
+    ICOLS.forEach(col=>{
+      const g=yearIIFs.filter(i=>i.status===col);
+      if(!g.length) return;
+      txt+=`${col.toUpperCase()} (${g.length}):\n`;
+      g.forEach(i=>txt+=`  • ${i.cust} | Ref: ${i.ref} | Product: ${i.prod}\n`);
+      txt+='\n';
+    });
+  } else {
+    txt+='No IIFs recorded.\n\n';
+  }
+
+  // ── OPEN ACTIONS ──
+  if(openActions.length){
+    txt+='================================================================\n';
+    txt+='OPEN ACTION POINTS (carry-forward)\n';
+    txt+='================================================================\n\n';
+    openActions.forEach(a=>txt+=`• ${a.cust}: ${a.text}${a.due?' | Due: '+a.due:''} | Status: ${a.status}\n`);
+    txt+='\n';
+  }
+
+  txt+='================================================================\n';
+  txt+='END OF AI SUMMARY PACK\n';
+  txt+='================================================================\n';
+
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`huber-ai-pack-${year}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`\u2193 AI Pack downloaded — ${year}`);
+}
+
+function showAIPrompt(){
+  const box=document.getElementById('ai-prompt-box');
+  const ptxt=document.getElementById('ai-prompt-text');
+  const year=document.getElementById('ai-year')?.value||new Date().getFullYear();
+  const repName=settings.repName||'a Territory Account Manager';
+  box.style.display=box.style.display==='none'?'block':'none';
+  ptxt.textContent=`I am going to give you a plain-text data file exported from my visit management system. It contains all my customer visit logs, admin day records, IIF pipeline entries, and open action points for ${year}. I work as ${repName} in the print and packaging ink industry.\n\nPlease read through everything and then:\n1. Summarise the year — key themes, most active accounts, standout wins and challenges\n2. Highlight which customers I visited most and least\n3. Identify patterns in what was discussed (products, feedback, concerns)\n4. Summarise admin achievements and any recurring tasks or blockers\n5. List any IIFs that completed vs those still open\n6. Suggest 3–5 priorities I should focus on in the coming year based on what you see\n\nBe specific and reference actual customer names and details from the data.`;
+}
+
+function copyAIPrompt(){
+  const ptxt=document.getElementById('ai-prompt-text');
+  if(!ptxt) return;
+  navigator.clipboard.writeText(ptxt.textContent).then(()=>toast('Prompt copied to clipboard!')).catch(()=>toast('Select the text above to copy','#c0392b'));
+}
+
+// ===== ADMIN DAYS WORD EXPORT (standalone) =====
+function exportAdminDaysReport(){
+  if(!adminDays.length){toast('No admin days recorded yet','#c0392b');return;}
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const repName=settings.repName||'Territory Account Manager';
+  let s=`<h1>Huber Visit Manager</h1><h2>Admin Day Report</h2><p class="meta">Rep: <strong>${esc(repName)}</strong> &bull; Generated: ${now} &bull; ${adminDays.length} sessions</p>`;
+
+  // Summary stats
+  let totalDone=0,totalOpen=0,totalOverdue=0;
+  adminDays.forEach(d=>{
+    (d.todos||[]).forEach(t=>{
+      if(t.done)totalDone++;
+      else{ totalOpen++; if(t.due&&t.due<today())totalOverdue++; }
+    });
+  });
+  s+=`<h2>Summary</h2>
+  <table><tr><th>Metric</th><th>Count</th></tr>
+  <tr><td>Admin Days Logged</td><td>${adminDays.length}</td></tr>
+  <tr><td>Tasks Completed</td><td>${totalDone}</td></tr>
+  <tr><td>Tasks Still Open</td><td>${totalOpen}</td></tr>
+  <tr><td>Overdue Tasks</td><td style="color:#c0392b;">${totalOverdue}</td></tr>
+  </table>`;
+
+  // Each admin day
+  adminDays.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(day=>{
+    s+=`<h2 class="pb">Admin Day — ${fmtDate(day.date)}</h2>`;
+    if(day.achieved&&day.achieved.length){
+      s+='<p class="lbl">What I Achieved:</p>';
+      s+='<table><tr><th>#</th><th>Achievement</th></tr>';
+      day.achieved.forEach((a,i)=>s+=`<tr><td>${i+1}</td><td>${esc(a)}</td></tr>`);
+      s+='</table>';
+    }
+    if(day.todos&&day.todos.length){
+      s+='<p class="lbl">Jobs &amp; Tasks:</p>';
+      s+='<table><tr><th>Status</th><th>Task</th><th>Due Date</th><th>Notes</th></tr>';
+      day.todos.forEach(t=>{
+        const status=t.done?'Done':(t.due&&t.due<today()?'Overdue':'Open');
+        const col=t.done?'green':t.due&&t.due<today()?'#c0392b':'inherit';
+        s+=`<tr><td style="color:${col};font-weight:bold;">${status}</td><td>${esc(t.text)}</td><td>${t.due?fmtDate(t.due):'-'}</td><td>${t.carriedForward?'Carried forward':''}</td></tr>`;
+      });
+      s+='</table>';
+    }
+    if(day.notes) s+=`<p class="lbl">Notes:</p><p class="note">${esc(day.notes)}</p>`;
+  });
+
+  dlDoc(s,'admin-days-report.doc');
+  toast('\u2193 Admin Days Report downloaded');
+}
+
+
+function populateYearSelect(){
+  const sel=document.getElementById('rpt-year');if(!sel)return;
+  const currentYear=new Date().getFullYear();
+  const years=new Set([currentYear,currentYear-1]);
+  logs.forEach(l=>{if(l.date)years.add(parseInt(l.date.slice(0,4)));});
+  visits.forEach(v=>{if(v.date)years.add(parseInt(v.date.slice(0,4)));});
+  const sorted=[...years].filter(y=>!isNaN(y)).sort((a,b)=>b-a);
+  sel.innerHTML=sorted.map(y=>`<option value="${y}"${y===currentYear?' selected':''}>${y}</option>`).join('');
+}
+
+function exportYearReport(){
+  const sel=document.getElementById('rpt-year');
+  const year=sel?parseInt(sel.value):new Date().getFullYear();
+  const pfx=String(year);
+  const yearLogs=logs.filter(l=>l.date&&l.date.startsWith(pfx));
+  const yearVisits=visits.filter(v=>v.date&&v.date.startsWith(pfx)&&v.status==='complete');
+  const yearActions=actions.filter(a=>true); // all for context
+  const yearIIFs=iifs;
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const repName=settings.repName||'Territory Account Manager';
+  const territory=settings.territory||'Territory';
+
+  let s=`<h1>Huber Visit Manager</h1>
+  <h2>${year} Year-in-Review Report</h2>
+  <p class="meta">Prepared by: <strong>${esc(repName)}</strong> &bull; Territory: <strong>${esc(territory)}</strong> &bull; Generated: ${now}</p>
+  <div style="margin:16pt 0;padding:12pt 16pt;background:#f0f4ff;border-left:4pt solid #0054a6;">
+    <strong>Summary for ${year}:</strong> ${yearLogs.length} visits logged across ${new Set(yearLogs.map(l=>l.cust)).size} accounts &bull;
+    ${actions.filter(a=>a.done).length} actions completed &bull;
+    ${iifs.filter(i=>i.status==='Completed').length} IIFs completed
+  </div>`;
+
+  // Visit count per customer
+  s+=`<h2>Visits by Account (${year})</h2>
+  <table><tr><th>Customer</th><th>Group</th><th>Visits Logged</th><th>Last Visit</th></tr>`;
+  const custCounts={};yearLogs.forEach(l=>{custCounts[l.cust]=(custCounts[l.cust]||0)+1;});
+  getAllCustomers().filter(c=>custCounts[c.name]).sort((a,b)=>(custCounts[b.name]||0)-(custCounts[a.name]||0)).forEach(c=>{
+    const lv=yearLogs.filter(l=>l.cust===c.name).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    s+=`<tr><td>${esc(c.name)}</td><td>${esc(c.group)}</td><td style="text-align:center;font-weight:bold;">${custCounts[c.name]}</td><td>${lv?fmtDate(lv.date):'-'}</td></tr>`;
+  });
+  s+='</table>';
+
+  // IIF Summary
+  if(yearIIFs.length){
+    s+=`<h2>IIF Pipeline Summary</h2>
+    <table><tr><th>Customer</th><th>IIF Ref</th><th>Product</th><th>Status</th></tr>`;
+    yearIIFs.forEach(i=>{s+=`<tr><td>${esc(i.cust)}</td><td>${esc(i.ref)}</td><td>${esc(i.prod)}</td><td>${esc(i.status)}</td></tr>`;});
+    s+='</table>';
+  }
+
+  // Full visit log chronologically
+  s+=`<h2>Full Visit Log — ${year}</h2>`;
+  const sorted=[...yearLogs].sort((a,b)=>a.date.localeCompare(b.date));
+  if(sorted.length){
+    sorted.forEach(l=>s+=logBlock(l));
+  } else {
+    s+=`<p style="color:#666;">No visit logs recorded for ${year}.</p>`;
+  }
+
+  dlDoc(s,`huber-year-report-${year}.doc`);
+  toast(`\u2193 ${year} Year Report downloaded`);
+}
+
+
+// ===== QUICK EXPORTS: CUSTOMER AI SUMMARY =====
+function populateQESelects(){
+  const sel=document.getElementById('qe-cust');
+  if(!sel) return;
+  sel.innerHTML='<option value="">All customers</option>'+getAllCustomers().map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  // Default dates: last 3 months → today
+  const to=today();
+  const from=new Date();from.setMonth(from.getMonth()-3);
+  document.getElementById('qe-from').value=from.toISOString().split('T')[0];
+  document.getElementById('qe-to').value=to;
+  updateQEPrompt();
+}
+function updateQEPrompt(){
+  const custEl=document.getElementById('qe-cust');
+  const cust=custEl?custEl.value:'';
+  const from=document.getElementById('qe-from')?.value||'';
+  const to=document.getElementById('qe-to')?.value||'';
+  const repName=settings.repName||'a Territory Account Manager';
+  const custLabel=cust||'all customers';
+  const dateLabel=from&&to?`between ${fmtDate(from)} and ${fmtDate(to)}`:'across the selected date range';
+  const ptxt=document.getElementById('qe-prompt-text');
+  if(ptxt) ptxt.textContent=`I'm going to give you a plain-text export from my visit management system. It contains visit logs for ${custLabel} ${dateLabel}. I work as ${repName} in the print and packaging ink industry.\n\nPlease:\n1. Summarise the key themes and outcomes from these visits\n2. Highlight any important product discussions, feedback or concerns raised\n3. List any outstanding action points or IIFs\n4. Suggest 2–3 follow-up priorities based on what you see`;
+}
+function exportCustomerAISummary(){
+  const cust=document.getElementById('qe-cust')?.value||'';
+  const from=document.getElementById('qe-from')?.value||'';
+  const to=document.getElementById('qe-to')?.value||'';
+  if(!from||!to){toast('Please set a From and To date','#c0392b');return;}
+  let filtered=logs.filter(l=>{
+    if(!l.date) return false;
+    if(cust&&l.cust!==cust) return false;
+    if(l.date<from||l.date>to) return false;
+    return true;
+  }).slice().sort((a,b)=>a.date.localeCompare(b.date));
+  if(!filtered.length){toast('No visit logs found for those filters','#c0392b');return;}
+  const repName=settings.repName||'Territory Account Manager';
+  const territory=settings.territory||'Territory';
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const custLabel=cust||'All Customers';
+  let txt='================================================================\n';
+  txt+='HUBER VISIT MANAGER — AI CUSTOMER SUMMARY EXPORT\n';
+  txt+='================================================================\n';
+  txt+=`Rep: ${repName}\n`;
+  txt+=`Territory: ${territory}\n`;
+  txt+=`Customer: ${custLabel}\n`;
+  txt+=`Date Range: ${fmtDate(from)} — ${fmtDate(to)}\n`;
+  txt+=`Total Visits in Range: ${filtered.length}\n`;
+  txt+=`Generated: ${now}\n`;
+  txt+='================================================================\n\n';
+  // Visit Logs
+  txt+='VISIT LOGS\n';
+  txt+='----------\n\n';
+  filtered.forEach(l=>{
+    txt+=`DATE: ${l.date}  |  CUSTOMER: ${l.cust}\n`;
+    if(l.contact) txt+=`CONTACT MET: ${l.contact}\n`;
+    if(l.notes) txt+=`WHAT WAS DISCUSSED:\n${l.notes}\n`;
+    if(l.tprod) txt+=`PRODUCTS / INKS DISCUSSED: ${l.tprod}\n`;
+    if(l.comments) txt+=`KEY FEEDBACK & DISCUSSION:\n${l.comments}\n`;
+    if(l.tact) txt+=`NEXT ACTION POINT: ${l.tact}\n`;
+    if(l.prevAct) txt+=`PREVIOUS ACTION: ${l.prevAct}  →  OUTCOME: ${l.prevUpd||'Not recorded'}\n`;
+    if(l.iif) txt+=`IIF REFERENCE: ${l.iif}  |  PRODUCT: ${l.iifProd||'—'}  |  STATUS: ${l.iifStat||'—'}\n`;
+    if(l.iifSum) txt+=`IIF SUMMARY: ${l.iifSum}\n`;
+    if(l.projects) txt+=`PROJECTS / EXTRA NOTES: ${l.projects}\n`;
+    txt+='\n---\n\n';
+  });
+  // Actions linked to this customer in date range
+  const relActions=cust
+    ? actions.filter(a=>a.cust===cust)
+    : actions;
+  const openActs=relActions.filter(a=>!a.done);
+  if(openActs.length){
+    txt+='================================================================\n';
+    txt+='OPEN ACTION POINTS\n';
+    txt+='================================================================\n\n';
+    openActs.forEach(a=>txt+=`• ${a.cust}: ${a.text}${a.due?' | Due: '+fmtDate(a.due):''}  | Status: ${a.status}\n`);
+    txt+='\n';
+  }
+  // IIFs for customer
+  const relIIFs=cust ? iifs.filter(i=>i.cust===cust) : iifs;
+  if(relIIFs.length){
+    txt+='================================================================\n';
+    txt+='IIF PIPELINE\n';
+    txt+='================================================================\n\n';
+    relIIFs.forEach(i=>txt+=`• ${i.cust}  |  Ref: ${i.ref}  |  Product: ${i.prod||'—'}  |  Status: ${i.status}\n`);
+    txt+='\n';
+  }
+  txt+='================================================================\n';
+  txt+='END OF AI SUMMARY EXPORT\n';
+  txt+='================================================================\n';
+  const slug=cust?cust.replace(/[\s\/\\]/g,'-').toLowerCase():'all-customers';
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`huber-ai-summary-${slug}-${from}-to-${to}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  // Show preview count
+  const prev=document.getElementById('qe-preview');
+  if(prev){prev.style.display='block';prev.textContent=`✓ Exported ${filtered.length} visit log${filtered.length!==1?'s':''} for ${custLabel} — ready to paste into your AI tool.`;}
+  toast(`\u2193 AI Summary downloaded — ${filtered.length} visits`);
+}
+function copyQEPrompt(){
+  const ptxt=document.getElementById('qe-prompt-text');
+  if(!ptxt) return;
+  navigator.clipboard.writeText(ptxt.textContent).then(()=>toast('Prompt copied!')).catch(()=>toast('Select the text above to copy','#c0392b'));
+}
+
+// ===== EXPORT SINGLE VISIT AS WORD DOCUMENT =====
+function exportVisitWord(vid){
+  const v=visits.find(x=>String(x.id)===String(vid));
+  if(!v){toast('Visit not found','#c0392b');return;}
+  const existingLog=logs.find(l=>l.visitId===String(vid));
+  const dateLog=!existingLog?logs.find(l=>l.cust===v.cust&&l.date===v.date):null;
+  const l=existingLog||dateLog;
+  const now=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const statusColor=v.status==='complete'?'#1a7a3a':v.status==='cancelled'?'#c0392b':'#0054a6';
+
+  let s=`
+  <h1>Visit Report</h1>
+
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14pt;">
+    <tr>
+      <td style="width:50%;padding:8pt 10pt;vertical-align:top;border:1px solid #ddd;">
+        <span style="font-size:9pt;color:#666;text-transform:uppercase;letter-spacing:.5pt;">Customer</span><br/>
+        <strong style="font-size:14pt;color:#1F4E79;">${esc(v.cust)}</strong>
+      </td>
+      <td style="width:25%;padding:8pt 10pt;vertical-align:top;border:1px solid #ddd;">
+        <span style="font-size:9pt;color:#666;text-transform:uppercase;letter-spacing:.5pt;">Date</span><br/>
+        <strong>${fmtDate(v.date)}${v.time?' at '+esc(v.time):''}</strong>
+      </td>
+      <td style="width:25%;padding:8pt 10pt;vertical-align:top;border:1px solid #ddd;text-align:center;">
+        <span style="font-size:9pt;color:#666;text-transform:uppercase;letter-spacing:.5pt;">Status</span><br/>
+        <strong style="color:${statusColor};">${esc(v.status.toUpperCase())}</strong>
+      </td>
+    </tr>
+  </table>
+
+  <h2>Visit Details</h2>
+  <table>
+    <tr><th style="width:30%;">Field</th><th>Detail</th></tr>
+    ${v.contact||l?.contact?`<tr><td>Contact Met</td><td>${esc(v.contact||l.contact)}</td></tr>`:''}
+    ${v.purpose?`<tr><td>Visit Purpose</td><td>${esc(v.purpose)}</td></tr>`:''}
+    ${v.prods?`<tr><td>Products Planned</td><td>${esc(v.prods)}</td></tr>`:''}
+  </table>
+  ${v.notes?`
+  <p class="lbl" style="color:#b35c00;">Pre-Visit Objectives:</p>
+  <p class="note" style="background:#fff3e0;padding:8pt 10pt;border-left:3pt solid #b35c00;">${esc(v.notes)}</p>`:''}`;
+
+  if(l){
+    s+=`<h2>Visit Log</h2>
+    <table>
+      <tr><th style="width:30%;">Field</th><th>Detail</th></tr>
+      ${l.notes?`<tr><td>What Was Discussed</td><td>${esc(l.notes)}</td></tr>`:''}
+      ${l.tprod?`<tr><td>Products / Inks</td><td>${esc(l.tprod)}</td></tr>`:''}
+      ${l.comments?`<tr><td>Key Discussion &amp; Feedback</td><td>${esc(l.comments)}</td></tr>`:''}
+      ${l.tact?`<tr><td><strong style="color:#0054a6;">Next Action Point</strong></td><td><strong style="color:#0054a6;">${esc(l.tact)}</strong></td></tr>`:''}
+      ${l.prevAct?`<tr><td>Previous Action</td><td>${esc(l.prevAct)}${l.prevUpd?' &mdash; '+esc(l.prevUpd):''}</td></tr>`:''}
+      ${l.iif?`<tr><td>IIF Reference</td><td>${esc(l.iif)}${l.iifProd?' &mdash; '+esc(l.iifProd):''}${l.iifStat?' ('+esc(l.iifStat)+')':''}</td></tr>`:''}
+      ${l.iifSum?`<tr><td>IIF Summary</td><td>${esc(l.iifSum)}</td></tr>`:''}
+      ${l.projects?`<tr><td>Projects / Notes</td><td>${esc(l.projects)}</td></tr>`:''}
+    </table>`;
+  } else {
+    s+=`<p class="note" style="color:#888;font-style:italic;">No visit log recorded yet.</p>`;
+  }
+
+  // Open actions for this customer
+  const custOpenActions=actions.filter(a=>a.cust===v.cust&&!a.done);
+  if(custOpenActions.length){
+    s+=`<h2>Open Actions for This Customer</h2>
+    <table><tr><th>Action</th><th>Due Date</th><th>Status</th></tr>
+    ${custOpenActions.map(a=>`<tr><td>${esc(a.text)}</td><td>${a.due?fmtDate(a.due):'-'}</td><td style="color:${a.status==='overdue'?'#c0392b':'inherit'}">${esc(a.status)}</td></tr>`).join('')}
+    </table>`;
+  }
+
+  // IIFs for this customer
+  const custIIFs=iifs.filter(i=>i.cust===v.cust);
+  if(custIIFs.length){
+    s+=`<h2>IIF Pipeline &mdash; ${esc(v.cust)}</h2>
+    <table><tr><th>IIF Ref</th><th>Product</th><th>Status</th></tr>
+    ${custIIFs.map(i=>`<tr><td style="font-family:monospace;font-weight:bold;">${esc(i.ref)}</td><td>${esc(i.prod||'-')}</td><td>${esc(i.status)}</td></tr>`).join('')}
+    </table>`;
+  }
+
+  const slug=(v.cust||'visit').replace(/[\s\/\\]/g,'-').toLowerCase();
+  dlDoc(s,`visit-report-${slug}-${v.date}.doc`);
+  toast('\u2193 Visit report downloaded');
+}
+
+function init(){
+  document.getElementById('date-display').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('log-date').value=today();
+  document.getElementById('sch-date').value=today();
+  const y1=new Date();y1.setMonth(y1.getMonth()-1);
+  document.getElementById('rpt-from').value=y1.toISOString().split('T')[0];
+  document.getElementById('rpt-to').value=today();
+  populateSel();renderDash();renderCusts();renderSavedLogs();loadSettings();updateStorageDisplay();updateAdminStats();renderAllOpenTodos();
+  populateYearSelect();
+  populateAIYearSelect();
+  populateQESelects();
+}
+init();
+</script>
+</body>
+</html>
